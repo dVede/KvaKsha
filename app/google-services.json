@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "328643111995",
+    "firebase_url": "https://kvaksha-77242.firebaseio.com",
+    "project_id": "kvaksha-77242",
+    "storage_bucket": "kvaksha-77242.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:328643111995:android:d8bf52d41021b8c8",
+        "android_client_info": {
+          "package_name": "com.example.registration"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "328643111995-4h13moa3b218mhsdel201g6b737nr8pe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7CU7yncgljRXz5b-clcdHUWZp8ooDRWU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "328643111995-4h13moa3b218mhsdel201g6b737nr8pe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
