@@ -1,7 +1,6 @@
 package com.example.registration;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginIn extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,12 +34,17 @@ public class LoginIn extends AppCompatActivity {
                 String emailFind = email.getText().toString();
                 String passwordFind = password.getText().toString();
 
+                if (emailFind.isEmpty() || passwordFind.isEmpty()) {
+                    Toast.makeText(LoginIn.this , "Pleas enter text in email/pw", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 final FirebaseAuth mAuth;
                 mAuth = FirebaseAuth.getInstance();
                 mAuth.signInWithEmailAndPassword(emailFind, passwordFind)
                         .addOnCompleteListener(LoginIn.this, new OnCompleteListener<AuthResult>() {
                             @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
+                            public void onComplete(Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
                                     Log.d("signInWithEmailSuccess", "signInWithEmail:success");
