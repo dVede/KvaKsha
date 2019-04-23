@@ -36,6 +36,7 @@ public class LoginIn extends AppCompatActivity {
 
                 if (emailFind.isEmpty() || passwordFind.isEmpty()) {
                     Toast.makeText(LoginIn.this , "Pleas enter text in email/pw", Toast.LENGTH_SHORT).show();
+                    //TODO: move toast string to strings.xml
                     return;
                 }
 
@@ -49,6 +50,7 @@ public class LoginIn extends AppCompatActivity {
                                     // Sign in success, update UI with the signed-in user's information
                                     Log.d("signInWithEmailSuccess", "signInWithEmail:success");
                                     FirebaseUser user = mAuth.getCurrentUser();
+                                    //TODO: showChat() for chowing main chat layout
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Log.w("signInWithEmailFail", "signInWithEmail:failure", task.getException());

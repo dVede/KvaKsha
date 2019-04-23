@@ -16,7 +16,7 @@ public class SlideMenu extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) { //TODO: replace placeholders in header.xml
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slide_menu);
         DrawerLayout mDrawerLayout = findViewById(R.id.slide_menu);
