@@ -164,7 +164,7 @@ public class Register extends AppCompatActivity {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d("RegisterActivity", "Saved in Database");
-                Intent intent = new Intent(Register.this, Messages.class);
+                Intent intent = new Intent(Register.this, SlideMenu.class);
                 startActivity(intent);
                 finish();
 
