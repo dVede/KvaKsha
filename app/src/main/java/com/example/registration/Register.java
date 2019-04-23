@@ -39,14 +39,6 @@ public class Register extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        EditText username = findViewById(R.id.username_edittext_register);
-        EditText email = findViewById(R.id.email_edittext_register);
-        EditText password = findViewById(R.id.password_eddittext_register);
-
-        final String usernameFind = username.getText().toString();
-        final String emailFind = email.getText().toString();
-        final String passwordFind = password.getText().toString();
-
         TextView already = findViewById(R.id.already_registartion);
         Button button = findViewById(R.id.register_button_register);
         Button photo = findViewById(R.id.selectphoto_button_register);
@@ -64,6 +56,19 @@ public class Register extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EditText username = findViewById(R.id.username_edittext_register);
+                EditText email = findViewById(R.id.email_edittext_register);
+                EditText password = findViewById(R.id.password_eddittext_register);
+
+                final String usernameFind = username.getText().toString();
+                final String emailFind = email.getText().toString();
+                final String passwordFind = password.getText().toString();
+
+                if (selectedPhoto == null) {
+                    Toast.makeText(Register.this, "Please choose image", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 if (emailFind.isEmpty() || passwordFind.isEmpty()) {
                     Toast.makeText(Register.this , "Pleas enter text in email/pw", Toast.LENGTH_SHORT).show();
                     return;
@@ -159,6 +164,10 @@ public class Register extends AppCompatActivity {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d("RegisterActivity", "Saved in Database");
+                Intent intent = new Intent(Register.this, Messages.class);
+                startActivity(intent);
+                finish();
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
