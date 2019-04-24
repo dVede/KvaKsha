@@ -60,17 +60,18 @@ public class Register extends AppCompatActivity {
                 EditText email = findViewById(R.id.email_edittext_register);
                 EditText password = findViewById(R.id.password_eddittext_register);
 
-                final String usernameFind = username.getText().toString();
+                final String usernameFind = username.getText().toString(); //TODO: typo error - replace find with found
                 final String emailFind = email.getText().toString();
                 final String passwordFind = password.getText().toString();
 
-                if (selectedPhoto == null) {
+                //TODO: move toast lines to strings.xml
+                if (selectedPhoto == null) { //TODO: long toasts, maybe?
                     Toast.makeText(Register.this, "Please choose image", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-                if (emailFind.isEmpty() || passwordFind.isEmpty()) {
-                    Toast.makeText(Register.this , "Pleas enter text in email/pw", Toast.LENGTH_SHORT).show();
+                //TODO: move toast lines to strings.xml
+                if (emailFind.isEmpty() || passwordFind.isEmpty()) { //TODO: long toasts, maybe?
+                    Toast.makeText(Register.this , "Please enter text in email/pw", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Log.d("RegisterActivity", "Try to create user with email: " + emailFind);
@@ -92,7 +93,7 @@ public class Register extends AppCompatActivity {
                                     // If sign in fails, display a message to the user.
                                     Log.w("emailCreateFail", "createUserWithEmail:failure", task.getException());
                                     Toast.makeText(Register.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
+                                            Toast.LENGTH_SHORT).show(); //TODO: long toasts, maybe?
                                 }
                             }
                         });
@@ -122,7 +123,7 @@ public class Register extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            BitmapDrawable bitmapDrawable = new BitmapDrawable(bitmap);
+            BitmapDrawable bitmapDrawable = new BitmapDrawable(bitmap); //TODO: deprecated stuff?
             Button photo = findViewById(R.id.selectphoto_button_register);
             photo.setBackgroundDrawable(bitmapDrawable);
 
