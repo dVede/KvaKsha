@@ -1,10 +1,12 @@
 package com.example.registration;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 
@@ -15,9 +17,9 @@ public class Message extends AppCompatActivity {
     private String user;
     private String text;
     private long time;
-    private URI image;
+    private Uri image;
 
-    public Message (String text, String user, URI image) {
+    public Message (String text, String user, Uri image) {
         this.text = text;
         this.user = user;
         this.time = new Date().getTime();
@@ -38,8 +40,8 @@ public class Message extends AppCompatActivity {
     public long getTime() {return time;}
     public void setTime (long time) {this.time = time;}
 
-    public URI getImage() {return image;}
-    public void setImage (URI image) {this.image = image;}
+    public Uri getImage() {return image;}
+    public void setImage (Uri image) {this.image = image;}
 
     FloatingActionButton sendMessageButton =
             findViewById(R.id.fab);
@@ -47,12 +49,14 @@ public class Message extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_chatroom);
 
         EditText userMessageInput = findViewById(R.id.input); //TODO: adapt getReference() to certain chatrooms
         FirebaseDatabase.getInstance().getReference().push()
                 .setValue(new Message(
                         userMessageInput.getText().toString(),
-                        FirebaseDatabase.getInstance().getCurrentUser().getDisplayName()
-                ));
+                        FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
+                        FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
+                );
     }
 }

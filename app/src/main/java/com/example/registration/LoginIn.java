@@ -1,5 +1,6 @@
 package com.example.registration;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -50,6 +51,9 @@ public class LoginIn extends AppCompatActivity {
                                     // Sign in success, update UI with the signed-in user's information
                                     Log.d("signInWithEmailSuccess", "signInWithEmail:success");
                                     FirebaseUser user = mAuth.getCurrentUser();
+                                    Intent intent = new Intent(LoginIn.this, SlideMenu.class);
+                                    startActivity(intent);
+                                    finish();
                                     //TODO: showChat() for chowing main chat layout
                                 } else {
                                     // If sign in fails, display a message to the user.
@@ -61,7 +65,6 @@ public class LoginIn extends AppCompatActivity {
                         });
             }
         });
-
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
