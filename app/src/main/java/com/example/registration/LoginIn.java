@@ -1,5 +1,6 @@
 package com.example.registration;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -36,6 +37,7 @@ public class LoginIn extends AppCompatActivity {
 
                 if (emailFind.isEmpty() || passwordFind.isEmpty()) {
                     Toast.makeText(LoginIn.this , "Pleas enter text in email/pw", Toast.LENGTH_SHORT).show();
+                    //TODO: move toast string to strings.xml
                     return;
                 }
 
@@ -49,6 +51,10 @@ public class LoginIn extends AppCompatActivity {
                                     // Sign in success, update UI with the signed-in user's information
                                     Log.d("signInWithEmailSuccess", "signInWithEmail:success");
                                     FirebaseUser user = mAuth.getCurrentUser();
+                                    Intent intent = new Intent(LoginIn.this, SlideMenu.class);
+                                    startActivity(intent);
+                                    finish();
+                                    //TODO: showChat() for chowing main chat layout
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Log.w("signInWithEmailFail", "signInWithEmail:failure", task.getException());
@@ -59,7 +65,6 @@ public class LoginIn extends AppCompatActivity {
                         });
             }
         });
-
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

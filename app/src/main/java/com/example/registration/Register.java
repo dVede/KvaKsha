@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,17 +61,18 @@ public class Register extends AppCompatActivity {
                 EditText email = findViewById(R.id.email_edittext_register);
                 EditText password = findViewById(R.id.password_eddittext_register);
 
-                final String usernameFind = username.getText().toString();
+                final String usernameFind = username.getText().toString(); //TODO: typo error - replace find with found
                 final String emailFind = email.getText().toString();
                 final String passwordFind = password.getText().toString();
 
-                if (selectedPhoto == null) {
+                //TODO: move toast lines to strings.xml
+                if (selectedPhoto == null) { //TODO: long toasts, maybe?
                     Toast.makeText(Register.this, "Please choose image", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-                if (emailFind.isEmpty() || passwordFind.isEmpty()) {
-                    Toast.makeText(Register.this , "Pleas enter text in email/pw", Toast.LENGTH_SHORT).show();
+                //TODO: move toast lines to strings.xml
+                if (emailFind.isEmpty() || passwordFind.isEmpty()) { //TODO: long toasts, maybe?
+                    Toast.makeText(Register.this , "Please enter text in email/pw", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Log.d("RegisterActivity", "Try to create user with email: " + emailFind);
@@ -92,7 +94,7 @@ public class Register extends AppCompatActivity {
                                     // If sign in fails, display a message to the user.
                                     Log.w("emailCreateFail", "createUserWithEmail:failure", task.getException());
                                     Toast.makeText(Register.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
+                                            Toast.LENGTH_SHORT).show(); //TODO: long toasts, maybe?
                                 }
                             }
                         });
@@ -122,9 +124,10 @@ public class Register extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            BitmapDrawable bitmapDrawable = new BitmapDrawable(bitmap);
+            ImageView imageCircle = findViewById(R.id.selectphoto_imagevies_circle);
             Button photo = findViewById(R.id.selectphoto_button_register);
-            photo.setBackgroundDrawable(bitmapDrawable);
+            imageCircle.setImageBitmap(bitmap);
+            photo.setAlpha(0f);
 
         }
     }
@@ -160,7 +163,7 @@ public class Register extends AppCompatActivity {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         EditText username = findViewById(R.id.username_edittext_register);
         User user = new User(uid, username.getText().toString(), profileImageUrl);
-        ref.child(user.uid).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+        ref.child("/users/" + user.uid).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d("RegisterActivity", "Saved in Database");
