@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -16,13 +17,13 @@ import java.util.Date;
 public class Message extends AppCompatActivity {
     private String user;
     private String text;
-    private long time;
+    private Date time;
     private Uri image;
 
     public Message (String text, String user, Uri image) {
         this.text = text;
         this.user = user;
-        this.time = new Date().getTime();
+        this.time = new Date();
         this.image = image;
     }
 
@@ -37,8 +38,8 @@ public class Message extends AppCompatActivity {
     public String getUser() {return user;}
     public void setUser (String user) {this.user = user;}
 
-    public long getTime() {return time;}
-    public void setTime (long time) {this.time = time;}
+    public Date getTime() {return time;}
+    public void setTime (Date time) {this.time = time;}
 
     public Uri getImage() {return image;}
     public void setImage (Uri image) {this.image = image;}
@@ -49,14 +50,20 @@ public class Message extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chatroom);
 
-        EditText userMessageInput = findViewById(R.id.input); //TODO: adapt getReference() to certain chatrooms
-        FirebaseDatabase.getInstance().getReference().push()
-                .setValue(new Message(
-                        userMessageInput.getText().toString(),
-                        FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
-                        FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
-                );
+        sendMessageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText userMessageInput = findViewById(R.id.input); //TODO: adapt getReference() to certain chatrooms
+                FirebaseDatabase.getInstance().getReference().child("/conversations/main").push()
+                        .setValue(new Message(
+                                userMessageInput.getText().toString(),
+                                FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
+                                FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
+                        );
+            }
+        });
+
+
     }
 }
