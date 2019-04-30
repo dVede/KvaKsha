@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -123,9 +124,10 @@ public class Register extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            BitmapDrawable bitmapDrawable = new BitmapDrawable(bitmap); //TODO: deprecated stuff?
+            ImageView imageCircle = findViewById(R.id.selectphoto_imagevies_circle);
             Button photo = findViewById(R.id.selectphoto_button_register);
-            photo.setBackgroundDrawable(bitmapDrawable);
+            imageCircle.setImageBitmap(bitmap);
+            photo.setAlpha(0f);
 
         }
     }
@@ -161,7 +163,7 @@ public class Register extends AppCompatActivity {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         EditText username = findViewById(R.id.username_edittext_register);
         User user = new User(uid, username.getText().toString(), profileImageUrl);
-        ref.child(user.uid).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+        ref.child("/users/" + user.uid).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d("RegisterActivity", "Saved in Database");
