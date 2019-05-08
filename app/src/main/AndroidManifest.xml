@@ -11,22 +11,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".SlideMenu">
-
-        </activity>
-
+        <activity android:name=".CreateChatroom"></activity>
+        <activity android:name=".EnterPrivateMessage" />
+        <activity android:name=".EnterChatroomMessage" />
+        <activity android:name=".SlideMenu" />
         <activity android:name=".Register">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".LoginIn" />
-
-        <activity android:name=".Message">
-
-        </activity>
+        <activity android:name=".Message" />
     </application>
 
 </manifest>
