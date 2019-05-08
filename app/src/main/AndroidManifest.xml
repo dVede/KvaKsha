@@ -23,7 +23,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoginIn" />
-        <activity android:name=".Message" />
     </application>
 
 </manifest>
