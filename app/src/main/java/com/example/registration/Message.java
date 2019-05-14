@@ -1,7 +1,9 @@
 package com.example.registration;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -13,6 +15,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.Objects;
 
 public class Message extends AppCompatActivity {
     private String user;
@@ -52,13 +55,14 @@ public class Message extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
                 EditText userMessageInput = findViewById(R.id.input); //TODO: adapt getReference() to certain chatrooms
                 FirebaseDatabase.getInstance().getReference().child("/conversations/main").push()
                         .setValue(new Message(
                                 userMessageInput.getText().toString(),
-                                FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
+                                Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getDisplayName(),
                                 FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
                         );
             }
