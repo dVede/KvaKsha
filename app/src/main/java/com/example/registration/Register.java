@@ -24,8 +24,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -37,16 +41,6 @@ import java.util.UUID;
 public class Register extends AppCompatActivity implements
         View.OnClickListener {
 
-    EditText username = findViewById(R.id.username_edittext_register);
-    EditText email = findViewById(R.id.email_edittext_register);
-    EditText password = findViewById(R.id.password_eddittext_register);
-
-    String usernameFound = username.getText().toString();
-    String emailFound = email.getText().toString();
-    String passwordFound = password.getText().toString();
-
-    Uri selectedPhoto = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +51,7 @@ public class Register extends AppCompatActivity implements
         findViewById(R.id.selectphoto_button_register).setOnClickListener(this);
     }
 
+    Uri selectedPhoto = null;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Register.super.onActivityResult(requestCode, resultCode, data);
@@ -78,24 +73,22 @@ public class Register extends AppCompatActivity implements
     }
 
     public void uploadImageToStorage(){
-        if (selectedPhoto == null)
-            return;
         String filename = UUID.randomUUID().toString();
         final StorageReference ref = FirebaseStorage.getInstance().getReference("/image/" + filename);
         ref.putFile(selectedPhoto).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-        @Override
-        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-            Log.d("RegisterActivity", "Successfully uploaded image:" + Objects.requireNonNull(taskSnapshot.getMetadata()).getPath());
-            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    Log.d("RegisterActivity", "FileLocation " + uri);
-                    saveUserInDatabase(uri.toString());
-                }
-            });
-        }
-    }).addOnFailureListener(new OnFailureListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.d("RegisterActivity", "Successfully uploaded image:" + Objects.requireNonNull(taskSnapshot.getMetadata()).getPath());
+                ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Log.d("RegisterActivity", "FileLocation " + uri);
+                        saveUserInDatabase(uri.toString());
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d("RegisterActivity", "Failed to upload image to storage");
@@ -133,43 +126,59 @@ public class Register extends AppCompatActivity implements
         startActivityForResult(intent, 0);
     }
 
-    public void register(String username, String email, String password) {
+    public void register() {
 
-        //TODO: move toast lines to strings.xml
+        EditText username = findViewById(R.id.username_edittext_register);
+        EditText email = findViewById(R.id.email_edittext_register);
+        EditText password = findViewById(R.id.password_eddittext_register);
+
+        final String usernameFound = username.getText().toString();
+        final String emailFound = email.getText().toString();
+        final String passwordFound = password.getText().toString();
+        Query usernameQuery = FirebaseDatabase.getInstance().getReference().child("users").orderByChild("username").equalTo(usernameFound);
+
+        if (emailFound.isEmpty() || passwordFound.isEmpty()) {
+            Toast.makeText(Register.this, "Please enter text in email/pw", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         if (selectedPhoto == null) {
             Toast.makeText(Register.this, "Please choose image", Toast.LENGTH_LONG).show();
             return;
         }
-        //TODO: move toast lines to strings.xml
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(Register.this, "Please enter text in email/pw", Toast.LENGTH_LONG).show();
-            return;
-        }
-        Log.d("RegisterActivity", "Try to create user with email: " + email);
-        Log.d("RegisterActivity", "Try to create user with password: " + password);
-        Log.d("RegisterActivity", "Try to create user with username:" + username);
 
-        final FirebaseAuth mAuth;
-        mAuth = FirebaseAuth.getInstance();
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(Register.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("emailCreateSuccess", "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            uploadImageToStorage();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("emailCreateFail", "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(Register.this, "Authentication failed.",
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+        usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() > 0){
+                    Toast.makeText(Register.this, "Username already taken", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    final FirebaseAuth mAuth;
+                    mAuth = FirebaseAuth.getInstance();
+                    mAuth.createUserWithEmailAndPassword(emailFound, passwordFound)
+                            .addOnCompleteListener(Register.this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d("emailCreateSuccess", "createUserWithEmail:success");
+                                        FirebaseUser user = mAuth.getCurrentUser();
+                                        uploadImageToStorage();
+                                    } else {
+                                        Log.w("emailCreateFail", "createUserWithEmail:failure", task.getException());
+                                        Toast.makeText(Register.this, "Authentication failed.",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
-
 
     public void alreadyRegister() {
         Log.d("RegisterActivity", "Try to show login activity");
@@ -177,20 +186,18 @@ public class Register extends AppCompatActivity implements
         startActivity(intent);
     }
 
-
     @Override
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.selectphoto_button_register) {
             imageSelect();
         } else if (i == R.id.register_button_register) {
-            register(usernameFound, emailFound, passwordFound );
+            register();
         } else if (i == R.id.already_registartion) {
             alreadyRegister();
         }
     }
 }
-
 
 class User{
     String uid, username, profileImageUrl;
