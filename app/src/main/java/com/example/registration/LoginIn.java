@@ -68,7 +68,8 @@ public class LoginIn extends AppCompatActivity implements View.OnClickListener{
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.login_registration) {
-            finish();
+            Intent intent = new Intent(LoginIn.this, Register.class);
+            startActivity(intent);
         } else if (i == R.id.login_button_login) {
             signIn();
         }

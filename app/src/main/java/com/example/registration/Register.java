@@ -180,12 +180,6 @@ public class Register extends AppCompatActivity implements
         });
     }
 
-    public void alreadyRegister() {
-        Log.d("RegisterActivity", "Try to show login activity");
-        Intent intent = new Intent(Register.this, LoginIn.class);
-        startActivity(intent);
-    }
-
     @Override
     public void onClick(View v) {
         int i = v.getId();
@@ -194,7 +188,7 @@ public class Register extends AppCompatActivity implements
         } else if (i == R.id.register_button_register) {
             register();
         } else if (i == R.id.already_registartion) {
-            alreadyRegister();
+            finish();
         }
     }
 }
