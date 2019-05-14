@@ -51,7 +51,7 @@ public class Register extends AppCompatActivity implements
         findViewById(R.id.selectphoto_button_register).setOnClickListener(this);
     }
 
-    Uri selectedPhoto = null;
+    Uri selectedPhoto = Uri.parse("https://firebasestorage.googleapis.com/v0/b/kvaksha-77242.appspot.com/o/image%2Flogo_blfstya.png?alt=media&token=12bcabf6-4553-4ef0-9628-af2c8fa7303c");
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Register.super.onActivityResult(requestCode, resultCode, data);
@@ -100,8 +100,9 @@ public class Register extends AppCompatActivity implements
         String uid = FirebaseAuth.getInstance().getUid();
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        EditText email = findViewById(R.id.email_edittext_register);
         EditText username = findViewById(R.id.username_edittext_register);
-        User user = new User(uid, username.getText().toString(), profileImageUrl);
+        User user = new User(uid, username.getText().toString(), profileImageUrl, email.getText().toString());
         ref.child("/users/" + user.uid).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -139,11 +140,6 @@ public class Register extends AppCompatActivity implements
 
         if (emailFound.isEmpty() || passwordFound.isEmpty()) {
             Toast.makeText(Register.this, "Please enter text in email/pw", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        if (selectedPhoto == null) {
-            Toast.makeText(Register.this, "Please choose image", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -194,11 +190,47 @@ public class Register extends AppCompatActivity implements
 }
 
 class User{
-    String uid, username, profileImageUrl;
+    String uid, username, profileImageUrl, email;
 
-    User(String uid, String username, String profileImageUrl) {
+    User(String email, String uid, String profileImageUrl, String username) {
         this.username = username;
         this.uid = uid;
         this.profileImageUrl = profileImageUrl;
+        this.email = email;
+    }
+    public User() {
+
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
