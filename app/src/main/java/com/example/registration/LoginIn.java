@@ -18,6 +18,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginIn extends AppCompatActivity implements View.OnClickListener{
 
+    FirebaseUser firebaseUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +64,17 @@ public class LoginIn extends AppCompatActivity implements View.OnClickListener{
                         }
                     }
                 });
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null){
+            Intent intent = new Intent(LoginIn.this, SlideMenu.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     @Override

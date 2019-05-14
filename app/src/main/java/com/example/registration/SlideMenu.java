@@ -78,7 +78,6 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
 
     }
 
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         int id = menuItem.getItemId();
