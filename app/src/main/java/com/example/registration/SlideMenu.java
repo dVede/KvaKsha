@@ -52,7 +52,10 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        updateInfo();
+    }
 
+    public void updateInfo(){
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference().child("/users/" + firebaseUser.getUid());
         Log.d("Heh", "////" + reference.toString());
@@ -60,12 +63,11 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                final TextView username = findViewById(R.id.textView2);
-                final TextView email = findViewById(R.id.textView1);
+                final TextView username = findViewById(R.id.textView1);
+                final TextView email = findViewById(R.id.textView2);
                 username.setText(user.getUsername());
                 email.setText(user.getEmail());
                 ImageView imageCircle = findViewById(R.id.profile_photo);
-                ImageView imageView = findViewById(R.id.imageView4);
                 Log.d("URL", "////" + reference.toString());
                 Picasso.get().load(user.getProfileImageUrl()).into(imageCircle);
             }
@@ -86,6 +88,7 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(SlideMenu.this, LoginIn.class);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.private_messages:
                 break;

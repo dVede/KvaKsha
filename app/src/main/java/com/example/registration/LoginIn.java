@@ -67,17 +67,6 @@ public class LoginIn extends AppCompatActivity implements View.OnClickListener{
     }
 
     @Override
-    protected void onStart(){
-        super.onStart();
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser != null){
-            Intent intent = new Intent(LoginIn.this, SlideMenu.class);
-            startActivity(intent);
-            finish();
-        }
-    }
-
-    @Override
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.login_registration) {

@@ -102,8 +102,8 @@ public class Register extends AppCompatActivity implements
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         EditText email = findViewById(R.id.email_edittext_register);
         EditText username = findViewById(R.id.username_edittext_register);
-        User user = new User(uid, username.getText().toString(), profileImageUrl, email.getText().toString());
-        ref.child("/users/" + user.uid).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+        User user = new User(email.getText().toString(), uid, profileImageUrl, username.getText().toString());
+        ref.child("/users/" + user.getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d("RegisterActivity", "Saved in Database");
@@ -190,7 +190,7 @@ public class Register extends AppCompatActivity implements
 }
 
 class User{
-    String uid, username, profileImageUrl, email;
+    String username, uid, profileImageUrl, email;
 
     User(String email, String uid, String profileImageUrl, String username) {
         this.username = username;
