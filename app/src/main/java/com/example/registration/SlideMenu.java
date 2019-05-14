@@ -48,14 +48,20 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
         switch (id){
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(SlideMenu.this, LoginIn.class);
-                startActivity(intent);
+                Intent intentLogout = new Intent(SlideMenu.this, LoginIn.class);
+                startActivity(intentLogout);
                 break;
             case R.id.private_messages:
+                Intent intentPM = new Intent(SlideMenu.this, EnterPrivateMessage.class);
+                startActivity(intentPM);
                 break;
             case R.id.chatroom_messages:
+                Intent intentCM = new Intent(SlideMenu.this, EnterChatroomMessage.class);
+                startActivity(intentCM);
                 break;
             case R.id.create_chatroom:
+                Intent intentCC = new Intent(SlideMenu.this, CreateChatroom.class);
+                startActivity(intentCC);
                 break;
             default:
         }

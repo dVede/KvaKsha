@@ -64,7 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/rounded2"
+        android:background="@drawable/rounded"
         android:text="@string/login"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toBottomOf="parent"
