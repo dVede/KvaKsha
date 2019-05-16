@@ -13,14 +13,13 @@ import java.text.SimpleDateFormat;
 
 
 public class Main_chat_activity extends AppCompatActivity {
-    private FirebaseListAdapter<Message> adapter;
 
     public void displayMessages() {
         setContentView(R.layout.activity_chatroom);
         //TODO: set slider here
         ListView listOfMessages = findViewById(R.id.list_of_messages);
 
-        adapter = new FirebaseListAdapter<Message>(this, Message.class, R.layout.message,
+        FirebaseListAdapter<Message> adapter = new FirebaseListAdapter<Message>(this, Message.class, R.layout.message,
                 FirebaseDatabase.getInstance().getReference().child("/conversations/main")
         ) {
             @Override
