@@ -1,32 +1,24 @@
 package com.example.registration;
 
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.EditText;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
-
-
-import java.net.URI;
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Objects;
+import java.util.Locale;
 
-public class Message extends AppCompatActivity {
-    private String user;
+public class Message implements Serializable {
     private String text;
-    private Date time;
+    private String user;
+    private String time;
     private Uri image;
 
     public Message (String text, String user, Uri image) {
         this.text = text;
         this.user = user;
-        this.time = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss (dd-MM)",
+                new Locale("ru", "RU"));
+        this.time = sdf.format(new Date());
         this.image = image;
     }
 
@@ -41,33 +33,10 @@ public class Message extends AppCompatActivity {
     public String getUser() {return user;}
     public void setUser (String user) {this.user = user;}
 
-    public Date getTime() {return time;}
-    public void setTime (Date time) {this.time = time;}
+    public String getTime() {return time;}
+    public void setTime (String time) {this.time = time;}
 
     public Uri getImage() {return image;}
     public void setImage (Uri image) {this.image = image;}
 
-    FloatingActionButton sendMessageButton =
-            findViewById(R.id.fab);
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        sendMessageButton.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void onClick(View v) {
-                EditText userMessageInput = findViewById(R.id.input); //TODO: adapt getReference() to certain chatrooms
-                FirebaseDatabase.getInstance().getReference().child("/conversations/main").push()
-                        .setValue(new Message(
-                                userMessageInput.getText().toString(),
-                                Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getDisplayName(),
-                                FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
-                        );
-            }
-        });
-
-
-    }
 }
