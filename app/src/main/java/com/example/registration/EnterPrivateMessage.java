@@ -45,7 +45,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
 
 
                 if (userFind.isEmpty()) {
-                    Toast.makeText(EnterPrivateMessage.this , "Please enter text in Username", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EnterPrivateMessage.this, "Please enter text in Username", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -64,9 +64,9 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                 usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        if (dataSnapshot.getChildrenCount() > 0){
+                                        if (dataSnapshot.getChildrenCount() > 0) {
                                             String chatroomName = "@" + username + "@" + userFind;
-                                            ref.child("/chatrooms/" +chatroomName).setValue(new Chatroom("@" + username + "@" + userFind));
+                                            ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom("@" + username + "@" + userFind));
                                             Intent intent = new Intent(EnterPrivateMessage.this, Message.class);
                                             intent.putExtra("chatroomName", chatroomName);
                                             startActivity(intent);
@@ -75,6 +75,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                         }
 
                                     }
+
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -84,6 +85,8 @@ public class EnterPrivateMessage extends AppCompatActivity {
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });
                     }
                 });
             }

@@ -68,7 +68,6 @@ public class Register extends AppCompatActivity implements
             Button photo = findViewById(R.id.selectphoto_button_register);
             imageCircle.setImageBitmap(bitmap);
             photo.setAlpha(0f);
-
         }
     }
 
@@ -128,7 +127,6 @@ public class Register extends AppCompatActivity implements
     }
 
     public void register() {
-
         EditText username = findViewById(R.id.username_edittext_register);
         EditText email = findViewById(R.id.email_edittext_register);
         EditText password = findViewById(R.id.password_eddittext_register);
@@ -136,18 +134,22 @@ public class Register extends AppCompatActivity implements
         final String usernameFound = username.getText().toString();
         final String emailFound = email.getText().toString();
         final String passwordFound = password.getText().toString();
-        Query usernameQuery = FirebaseDatabase.getInstance().getReference().child("users").orderByChild("username").equalTo(usernameFound);
 
-        if (emailFound.isEmpty() || passwordFound.isEmpty()) {
-            Toast.makeText(Register.this, "Please enter text in email/pw", Toast.LENGTH_LONG).show();
+        if (emailFound.isEmpty() || passwordFound.isEmpty() || usernameFound.isEmpty()) {
+            Toast.makeText(Register.this, "All fields are required", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        if (passwordFound.length() < 6){
+            Toast.makeText(Register.this, "password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+        }
+
+        Query usernameQuery = FirebaseDatabase.getInstance().getReference().child("users").orderByChild("username").equalTo(usernameFound);
         usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getChildrenCount() > 0){
-                    Toast.makeText(Register.this, "Username already taken", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Register.this, "Username already taken", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     final FirebaseAuth mAuth;
@@ -171,7 +173,6 @@ public class Register extends AppCompatActivity implements
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
     }
@@ -190,7 +191,7 @@ public class Register extends AppCompatActivity implements
 }
 
 class User{
-    String username, uid, profileImageUrl, email;
+    private String username, uid, profileImageUrl, email;
 
     User(String email, String uid, String profileImageUrl, String username) {
         this.username = username;
@@ -202,7 +203,7 @@ class User{
 
     }
 
-    public String getUid() {
+    String getUid() {
         return uid;
     }
 
@@ -210,7 +211,7 @@ class User{
         this.uid = uid;
     }
 
-    public String getUsername() {
+    String getUsername() {
         return username;
     }
 
@@ -218,7 +219,7 @@ class User{
         this.username = username;
     }
 
-    public String getProfileImageUrl() {
+    String getProfileImageUrl() {
         return profileImageUrl;
     }
 
@@ -226,7 +227,7 @@ class User{
         this.profileImageUrl = profileImageUrl;
     }
 
-    public String getEmail() {
+    String getEmail() {
         return email;
     }
 

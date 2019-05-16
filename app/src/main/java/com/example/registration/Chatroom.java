@@ -1,9 +1,11 @@
 package com.example.registration;
 
 public class Chatroom {
+
     String chatroomName;
     String pw;
     Message message;
+
     Chatroom(){}
     Chatroom(String chatroomName){
         this.chatroomName = chatroomName;

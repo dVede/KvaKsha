@@ -141,6 +141,7 @@ public class ProfileFragment extends Fragment {
             Toast.makeText(getContext(), "No image selected", Toast.LENGTH_SHORT).show();
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
