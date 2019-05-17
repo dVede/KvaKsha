@@ -17,7 +17,14 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginIn extends AppCompatActivity implements View.OnClickListener{
 
+    FirebaseAuth mAuth;
     FirebaseUser firebaseUser;
+
+    EditText email;
+    EditText password;
+
+    String emailFound;
+    String passwordFound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,16 +33,26 @@ public class LoginIn extends AppCompatActivity implements View.OnClickListener{
 
         findViewById(R.id.login_button_login).setOnClickListener(this);
         findViewById(R.id.login_registration).setOnClickListener(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null){
+            Intent intent = new Intent(LoginIn.this, SlideMenu.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     public void signIn() {
-        EditText email = findViewById(R.id.email_edittext_login);
-        EditText password = findViewById(R.id.password_edittext_login);
+        email = findViewById(R.id.email_edittext_login);
+        password = findViewById(R.id.password_edittext_login);
 
-        String emailFound = email.getText().toString();
-        String passwordFound = password.getText().toString();
+        emailFound = email.getText().toString();
+        passwordFound = password.getText().toString();
 
         if (emailFound.isEmpty() || passwordFound.isEmpty()) {
             Toast.makeText(LoginIn.this , "Pleas enter text in email/pw", Toast.LENGTH_SHORT).show();
@@ -43,7 +60,6 @@ public class LoginIn extends AppCompatActivity implements View.OnClickListener{
             return;
         }
 
-        final FirebaseAuth mAuth;
         mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithEmailAndPassword(emailFound, passwordFound)
                 .addOnCompleteListener(LoginIn.this, new OnCompleteListener<AuthResult>() {
@@ -52,7 +68,6 @@ public class LoginIn extends AppCompatActivity implements View.OnClickListener{
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("signInWithEmailSuccess", "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
                             Intent intent = new Intent(LoginIn.this, SlideMenu.class);
                             startActivity(intent);
                             finish();

@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,15 +26,23 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class SlideMenu extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
-    private ActionBarDrawerToggle mToggle;
+    ActionBarDrawerToggle mToggle;
 
     FirebaseUser firebaseUser;
     DatabaseReference reference;
+
+    NavigationView navigationView;
+    CircleImageView imageCircle;
+    TextView username;
+    View headerView;
+    TextView email;
+
+    DrawerLayout mDrawerLayout;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -41,14 +50,12 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slide_menu);
-        DrawerLayout mDrawerLayout = findViewById(R.id.slide_menu);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        mDrawerLayout = findViewById(R.id.slide_menu);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-
-
 
         updateInfo();
 
@@ -59,6 +66,12 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
     }
 
     public void updateInfo(){
+       navigationView = findViewById(R.id.nav_view);
+       headerView = navigationView.getHeaderView(0);
+       imageCircle = headerView.findViewById(R.id.profile_photo);
+       email = headerView.findViewById(R.id.textView2);
+       username = headerView.findViewById(R.id.textView1);
+
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference().child("/users/" + firebaseUser.getUid());
         Log.d("Heh", "////" + reference.toString());
@@ -66,21 +79,15 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                final TextView username = findViewById(R.id.textView1);
-                final TextView email = findViewById(R.id.textView2);
                 username.setText(user.getUsername());
                 email.setText(user.getEmail());
-                ImageView imageCircle = findViewById(R.id.profile_photo);
-                Log.d("URL", "////" + reference.toString());
                 Picasso.get().load(user.getProfileImageUrl()).into(imageCircle);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
-
     }
 
     @Override
@@ -95,8 +102,8 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(SlideMenu.this, LoginIn.class);
-                startActivity(intent);
                 finish();
+                startActivity(intent);
                 break;
             case R.id.private_messages:
                 Intent intentPM = new Intent(SlideMenu.this, EnterPrivateMessage.class);
@@ -112,8 +119,8 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
                 break;
             default:
         }
-        DrawerLayout drawer = findViewById(R.id.slide_menu);
-        drawer.closeDrawer(GravityCompat.START);
+        mDrawerLayout = findViewById(R.id.slide_menu);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 

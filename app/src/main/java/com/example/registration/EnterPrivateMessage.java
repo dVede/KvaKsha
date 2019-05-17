@@ -67,7 +67,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                         if (dataSnapshot.getChildrenCount() > 0) {
                                             String chatroomName = "@" + username + "@" + userFind;
                                             ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom("@" + username + "@" + userFind));
-                                            Intent intent = new Intent(EnterPrivateMessage.this, Message.class);
+                                            Intent intent = new Intent(EnterPrivateMessage.this, Main_chat_activity.class);
                                             intent.putExtra("chatroomName", chatroomName);
                                             startActivity(intent);
                                         } else {

@@ -60,7 +60,7 @@ public class CreateChatroom extends AppCompatActivity {
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         if (dataSnapshot.getChildrenCount() == 0){
                                             ref.child("/chatrooms/" + chatroomNameFind).setValue(new Chatroom(chatroomNameFind, passwordChatroomFind));
-                                            Intent intent = new Intent(CreateChatroom.this, Message.class);
+                                            Intent intent = new Intent(CreateChatroom.this, Main_chat_activity.class);
                                             intent.putExtra("chatroomName", chatroomNameFind);
                                             startActivity(intent);
                                         } else {

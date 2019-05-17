@@ -71,7 +71,7 @@ public class EnterChatroomMessage extends AppCompatActivity {
                                             Chatroom chatroom = dataSnapshot.getValue(Chatroom.class);
                                             String pw = chatroom.getPw();
                                             if (pw.equals(passwordChatroomFind)){
-                                                Intent intent = new Intent(EnterChatroomMessage.this, Message.class);
+                                                Intent intent = new Intent(EnterChatroomMessage.this, Main_chat_activity.class);
                                                 intent.putExtra("chatroomName", chatroomNameFind);
                                                 startActivity(intent);
                                             } else {
