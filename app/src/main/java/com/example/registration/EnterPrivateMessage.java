@@ -23,7 +23,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.Map;
 
 public class EnterPrivateMessage extends AppCompatActivity {
@@ -54,7 +53,6 @@ public class EnterPrivateMessage extends AppCompatActivity {
                             Toast.makeText(EnterPrivateMessage.this, "Please enter text in Username", Toast.LENGTH_SHORT).show();
                             return;
                         }
-
                         ref.child("/users/" + firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -124,6 +122,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                             Toast.makeText(EnterPrivateMessage.this, "Such user doesn't exist", Toast.LENGTH_SHORT).show();
                                         }
                                     }
+
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError databaseError) {
                                     }

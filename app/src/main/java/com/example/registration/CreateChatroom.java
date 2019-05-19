@@ -42,6 +42,7 @@ public class CreateChatroom extends AppCompatActivity {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
                         EditText createChatroomName = findViewById(R.id.create_chatroom_name);
                         EditText createPasswordChatroom = findViewById(R.id.create_password_chatroom);
 
@@ -72,6 +73,7 @@ public class CreateChatroom extends AppCompatActivity {
                             }
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
+
                             }
                         });
                     }

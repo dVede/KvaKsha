@@ -69,10 +69,12 @@ public class EnterChatroomMessage extends AppCompatActivity {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             Chatroom chatroom = dataSnapshot.getValue(Chatroom.class);
+
                                             String password = chatroom.getPw();
                                             if (password.equals(chatroomPassword)){
                                                 Intent intent = new Intent(EnterChatroomMessage.this, Main_chat_activity.class);
                                                 intent.putExtra("chatroomName", chatroomName);
+
                                                 startActivity(intent);
                                             } else {
                                                 Toast.makeText(EnterChatroomMessage.this, "incorrect password", Toast.LENGTH_SHORT).show();
