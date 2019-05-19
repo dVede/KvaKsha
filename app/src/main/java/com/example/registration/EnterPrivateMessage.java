@@ -24,6 +24,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Map;
+
 public class EnterPrivateMessage extends AppCompatActivity {
 
     FirebaseUser firebaseUser;
@@ -39,54 +41,107 @@ public class EnterPrivateMessage extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText pmUser = findViewById(R.id.pm_username);
-
-                final String userFind = pmUser.getText().toString();
-
-
-                if (userFind.isEmpty()) {
-                    Toast.makeText(EnterPrivateMessage.this , "Please enter text in Username", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
                 firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                 ref = FirebaseDatabase.getInstance().getReference();
 
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        EditText user = findViewById(R.id.pm_username);
+                        final String username = user.getText().toString();
+
+                        if (username.isEmpty()) {
+                            Toast.makeText(EnterPrivateMessage.this, "Please enter text in Username", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
                         ref.child("/users/" + firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                User user = dataSnapshot.getValue(User.class);
-                                final String username = user.getUsername();
-                                Query usernameQuery = FirebaseDatabase.getInstance().getReference().child("users").orderByChild("username").equalTo(userFind);
+                                final User currentUser = dataSnapshot.getValue(User.class);
+                                final String currentUsername = currentUser.getUsername();
+                                Query usernameQuery = FirebaseDatabase.getInstance().getReference().child("users").orderByChild("username").equalTo(username);
                                 usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        if (dataSnapshot.getChildrenCount() > 0){
-                                            String chatroomName = "@" + username + "@" + userFind;
-                                            ref.child("/chatrooms/" +chatroomName).setValue(new Chatroom("@" + username + "@" + userFind));
-                                            Intent intent = new Intent(EnterPrivateMessage.this, Message.class);
-                                            intent.putExtra("chatroomName", chatroomName);
-                                            startActivity(intent);
-                                        } else {
-                                            Toast.makeText(EnterPrivateMessage.this, "Such user does not exist", Toast.LENGTH_SHORT).show();
-                                        }
+                                        if (dataSnapshot.getChildrenCount() > 0) {
+                                            if(currentUsername.equals(username)){
+                                                final String privateChatroomName = "@" + currentUsername;
+                                                Query privateChatroomNameQuery = FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("chatroomName").equalTo(privateChatroomName);
+                                                privateChatroomNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        if (dataSnapshot.getChildrenCount() == 0) {
+                                                            ref.child("/chatrooms/" + "@" + currentUsername).setValue(new Chatroom(privateChatroomName));
+                                                        }
+                                                        IntentWithData(privateChatroomName);
+                                                    }
 
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                    }
+                                                });
+                                            } else {
+                                            final String chatroomName = "@" + currentUsername + "@" + username;
+                                            final String otherChatroomName = "@" + username + "@" + currentUsername;
+                                            Query chatroomNameQuery = FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("chatroomName").equalTo(chatroomName);
+                                            chatroomNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    if (dataSnapshot.getChildrenCount() > 0) {
+                                                        IntentWithData(chatroomName);
+                                                    } else {
+                                                        Query otherChatroomNameQuery = FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("chatroomName").equalTo(otherChatroomName);
+                                                        otherChatroomNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                if (dataSnapshot.getChildrenCount() > 0) {
+                                                                    IntentWithData(otherChatroomName);
+                                                                } else {
+                                                                    ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom(chatroomName));
+                                                                    IntentWithData(chatroomName);
+                                                                }
+
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                            }
+                                                        });
+                                                    }
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                }
+                                            });
+                                            }
+                                        } else {
+                                            Toast.makeText(EnterPrivateMessage.this, "Such user doesn't exist", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError databaseError) {
-
                                     }
                                 });
                             }
-
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });
                     }
                 });
             }
         });
+    }
+
+    private void IntentWithData(String chatroomName){
+        Intent intent = new Intent(EnterPrivateMessage.this, Main_chat_activity.class);
+        intent.putExtra("chatroomName", chatroomName);
+        startActivity(intent);
     }
 }

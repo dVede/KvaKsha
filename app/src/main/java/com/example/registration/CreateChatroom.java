@@ -18,7 +18,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class CreateChatroom extends AppCompatActivity {
 
@@ -34,51 +37,46 @@ public class CreateChatroom extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText createChatroomName = findViewById(R.id.create_chatroom_name);
-                EditText createPasswordChatroom = findViewById(R.id.create_password_chatroom);
-
-                final String chatroomNameFind = createChatroomName.getText().toString();
-                final String passwordChatroomFind = createPasswordChatroom.getText().toString();
-
                 ref = FirebaseDatabase.getInstance().getReference();
-
-                if (chatroomNameFind.contains("@")){
-                    Toast.makeText(CreateChatroom.this , "Don't use the @ symbol", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (chatroomNameFind.isEmpty() || passwordChatroomFind.isEmpty()) {
-                    Toast.makeText(CreateChatroom.this , "Please enter text in chatroomName/pw", Toast.LENGTH_SHORT).show();
-                    return;
-                }
 
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                                Query usernameQuery = FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("chatroomName").equalTo(chatroomNameFind);
-                                usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        if (dataSnapshot.getChildrenCount() == 0){
-                                            ref.child("/chatrooms/" + chatroomNameFind).setValue(new Chatroom(chatroomNameFind, passwordChatroomFind));
-                                            Intent intent = new Intent(CreateChatroom.this, Message.class);
-                                            intent.putExtra("chatroomName", chatroomNameFind);
-                                            startActivity(intent);
-                                        } else {
-                                            Toast.makeText(CreateChatroom.this, "Such chatroom exist", Toast.LENGTH_SHORT).show();
-                                        }
+                        EditText createChatroomName = findViewById(R.id.create_chatroom_name);
+                        EditText createPasswordChatroom = findViewById(R.id.create_password_chatroom);
 
-                                    }
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        final String chatroomName = createChatroomName.getText().toString();
+                        final String chatroomPassword = createPasswordChatroom.getText().toString();
 
-                                    }
-                                });
+                        if (chatroomName.contains("@")){
+                            Toast.makeText(CreateChatroom.this , "Don't use the @ symbol", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        if (chatroomName.isEmpty() || chatroomPassword.isEmpty()) {
+                            Toast.makeText(CreateChatroom.this , "Please enter text in chatroomName/pw", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        Query chatroomNameQuery = FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("chatroomName").equalTo(chatroomName);
+                        chatroomNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.getChildrenCount() == 0){
+                                    ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom(chatroomName, chatroomPassword));
+                                    Intent intent = new Intent(CreateChatroom.this, Main_chat_activity.class);
+                                    intent.putExtra("chatroomName", chatroomName);
+                                    startActivity(intent);
+                                } else {
+                                    Toast.makeText(CreateChatroom.this, "Such chatroom exist", Toast.LENGTH_SHORT).show();
+                                }
                             }
-
-
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
                         });
-
                     }
                 });
             }
+        });
+    }
 }
