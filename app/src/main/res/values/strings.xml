@@ -3,8 +3,6 @@
     <string name="already_have_an_account">Already have an account?</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="chatroom_name">Chatroom name</string>
     <string name="login">Login</string>
     <string name="register">Register</string>

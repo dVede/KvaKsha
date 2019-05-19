@@ -37,45 +37,47 @@ public class EnterChatroomMessage extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText createChatroomName = findViewById(R.id.chatroom_name);
-                EditText createPasswordChatroom = findViewById(R.id.password_chatroom);
-
-                final String chatroomNameFind = createChatroomName.getText().toString();
-                final String passwordChatroomFind = createPasswordChatroom.getText().toString();
-
                 ref = FirebaseDatabase.getInstance().getReference();
-
-                if (chatroomNameFind.contains("@")){
-                    Toast.makeText(EnterChatroomMessage.this , "Don't use the @ symbol", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (chatroomNameFind.isEmpty() || passwordChatroomFind.isEmpty()) {
-                    Toast.makeText(EnterChatroomMessage.this , "Please enter text in chatroomName/pw", Toast.LENGTH_SHORT).show();
-                    return;
-                }
 
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Query usernameQuery = FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("chatroomName").equalTo(chatroomNameFind);
-                        usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        EditText createChatroomName = findViewById(R.id.chatroom_name);
+                        EditText createPasswordChatroom = findViewById(R.id.password_chatroom);
+
+                        final String chatroomName = createChatroomName.getText().toString();
+                        final String chatroomPassword = createPasswordChatroom.getText().toString();
+
+                        if (chatroomName.contains("@")){
+                            Toast.makeText(EnterChatroomMessage.this , "Don't use the @ symbol", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        if (chatroomName.isEmpty() || chatroomPassword.isEmpty()) {
+                            Toast.makeText(EnterChatroomMessage.this , "Please enter text in chatroomName/pw", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        Query chatroomNameQuery = FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("chatroomName").equalTo(chatroomName);
+                        chatroomNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.getChildrenCount() == 0){
-                                    Toast.makeText(EnterChatroomMessage.this, "Such chatroom do not exist", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(EnterChatroomMessage.this, "Such chatroom don't exist", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    ref.child("/chatrooms/" + chatroomNameFind).addValueEventListener(new ValueEventListener() {
+                                    ref.child("/chatrooms/" + chatroomName).addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             Chatroom chatroom = dataSnapshot.getValue(Chatroom.class);
-                                            String pw = chatroom.getPw();
-                                            if (pw.equals(passwordChatroomFind)){
+
+                                            String password = chatroom.getPw();
+                                            if (password.equals(chatroomPassword)){
                                                 Intent intent = new Intent(EnterChatroomMessage.this, Main_chat_activity.class);
-                                                intent.putExtra("chatroomName", chatroomNameFind);
+                                                intent.putExtra("chatroomName", chatroomName);
+
                                                 startActivity(intent);
                                             } else {
-                                                Toast.makeText(EnterChatroomMessage.this, "asdfghyjukil", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(EnterChatroomMessage.this, "incorrect password", Toast.LENGTH_SHORT).show();
                                             }
                                         }
 
