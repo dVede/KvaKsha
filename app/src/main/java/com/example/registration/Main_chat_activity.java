@@ -151,7 +151,9 @@ public class Main_chat_activity extends AppCompatActivity {
 
                 userMessageInput.getText().clear();
 
+                if(adapter.getItemCount() >= 1){
                 listOfMessages.smoothScrollToPosition(adapter.getItemCount() - 1);
+                }
             }
         };
 
