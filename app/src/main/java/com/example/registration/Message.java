@@ -12,11 +12,12 @@ public class Message implements Serializable {
     private String user;
     private String time;
     private Uri image;
+    private String uid;
 
     public Message (String text, String user, Uri image) {
         this.text = text;
         this.user = user;
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss (dd-MM)",
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",
                 new Locale("ru", "RU"));
         this.time = sdf.format(new Date());
         this.image = image;
@@ -38,5 +39,8 @@ public class Message implements Serializable {
 
     public Uri getImage() {return image;}
     public void setImage (Uri image) {this.image = image;}
+
+    public String getSender() {return uid;}
+    public void setSender (String uid) {this.uid = uid;}
 
 }
