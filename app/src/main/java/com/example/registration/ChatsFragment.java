@@ -62,20 +62,25 @@ public class ChatsFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 usersList.clear();
-
-              //  for (DataSnapshot snapshot: dataSnapshot.getChildren()){
-              //      DataSnapshot message = snapshot.child("messages/");
-              //      for (DataSnapshot snapshot1: message.getChildren()){
-              //         Message messages = snapshot1.getValue(Message.class);
-              //         if (messages.getSender().equals(fUser.getUid())){
-              //              usersList.add(messages.getReceiver());
-              //          }
-              //          if (messages.getReceiver().equals(fUser.getUid())){
-                //          usersList.add(messages.getSender());
-                //        }
-               //     }
-              //  }
+                if (dataSnapshot.toString().contains("@")){
+                    for (DataSnapshot snapshot: dataSnapshot.getChildren()){
+                        DataSnapshot message = snapshot.child("/messages");
+                        for (DataSnapshot snapshot1: message.getChildren()){
+                           Message messages = snapshot1.getValue(Message.class);
+                            System.out.println(messages.toString());
+                            if (messages.getSender().equals(fUser.getUid())){
+                                usersList.add(messages.getReceiver());
+                            }
+                            if (messages.getReceiver().equals(fUser.getUid())){
+                                usersList.add(messages.getSender());
+                            }
+                        }
+                    }
                 readChats();
+               }
+               else{
+                   //TODO() for chatrooms(image)
+                }
             }
 
             @Override

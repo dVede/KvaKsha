@@ -116,9 +116,7 @@ public class Main_chat_activity extends AppCompatActivity {
                 EditText userMessageInput = findViewById(R.id.input);
 
                 Message userMessage = new Message(
-                        userMessageInput.getText().toString(),
-                        currentUser,
-                        photoURL
+                        userMessageInput.getText().toString(), currentUser, photoURL, FirebaseAuth.getInstance().getCurrentUser().getUid(), "heh"
                         );
 
                 DatabaseReference messageID = FirebaseDatabase.getInstance().getReference().child(chatroomPath).push();
