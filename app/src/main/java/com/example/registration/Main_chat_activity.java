@@ -128,33 +128,6 @@ public class Main_chat_activity extends AppCompatActivity {
         adapter.startListening();
         listOfMessages.setAdapter(adapter);
 
-                    @Override
-                    public int getItemViewType(int position){
-                        //if it is our message - return 1
-                        //if it was sent by the other person - return 0
-                        if(currentUser.equals(getItem(position).getSender())) return 1;
-                        else return 0;
-                    }
-
-                    @Override
-                    public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                        if(viewType == 0) {
-                            View view = LayoutInflater.from(parent.getContext())
-                                    .inflate(R.layout.message, parent, false);
-                            return new MessageViewHolder(view);
-                        }
-                        else if (viewType == 1){
-                            View view = LayoutInflater.from(parent.getContext())
-                                    .inflate(R.layout.this_user_message, parent, false);
-                            return new MessageViewHolder(view);
-                        }
-                        else{
-                            throw new RuntimeException("incorrect type while trying to get viewType");
-                        }
-                    }
-                };
-
-        listOfMessages.setAdapter(adapter);
 
         final FloatingActionButton sendMessageButton =
                 findViewById(R.id.fab);
@@ -178,7 +151,9 @@ public class Main_chat_activity extends AppCompatActivity {
 
                 userMessageInput.getText().clear();
 
+                if(adapter.getItemCount() >= 1){
                 listOfMessages.smoothScrollToPosition(adapter.getItemCount() - 1);
+                }
             }
         };
 
