@@ -15,6 +15,9 @@
     <string name="chatroom_messages">Chatroom Messages</string>
     <string name="create_chatroom">Create Chatroom</string>
     <string name="logout">Logout</string>
-    <string name="chatrooms">Chatrooms</string>
+    <string name="chatrooms">Chats</string>
     <string name="profile">Profile</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
