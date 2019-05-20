@@ -35,7 +35,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/input"
+        android:id="@+id/messageInput"
         android:autofillHints="Type your message" />
 </android.support.design.widget.TextInputLayout>
 
@@ -49,7 +49,9 @@
     android:dividerHeight="10dp"
     android:divider="@android:color/transparent"
     android:id="@+id/list_of_messages"
-    android:layout_marginBottom="10dp" />
+    android:layout_marginBottom="10dp"
+    app:stackFromEnd="true"
+    app:reverseLayout="true"/>
 
 
 
