@@ -35,7 +35,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/input"
+        android:id="@+id/messageInput"
         android:autofillHints="Type your message" />
 </android.support.design.widget.TextInputLayout>
 

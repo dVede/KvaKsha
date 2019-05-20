@@ -14,13 +14,14 @@ public class Message implements Serializable {
     private Uri image;
     private String uid;
 
-    public Message (String text, String user, Uri image) {
+    public Message (String text, String user, Uri image, String uid) {
         this.text = text;
         this.user = user;
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",
                 new Locale("ru", "RU"));
         this.time = sdf.format(new Date());
         this.image = image;
+        this.uid = uid;
     }
 
     public Message () {
