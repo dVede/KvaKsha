@@ -70,10 +70,9 @@ public class Main_chat_activity extends AppCompatActivity {
         Log.d("ChatActivity", "getting the chatroom path, current user and URL");
 
 
-        RecyclerView listOfMessages = findViewById(R.id.list_of_messages);
+        final RecyclerView listOfMessages = findViewById(R.id.list_of_messages);
         listOfMessages.setHasFixedSize(false);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setReverseLayout(true);
         listOfMessages.setLayoutManager(layoutManager);
 
         Query query = FirebaseDatabase.getInstance().getReference().child(chatroomPath).limitToLast(50);
@@ -83,7 +82,7 @@ public class Main_chat_activity extends AppCompatActivity {
                         .setQuery(query, Message.class)
                         .build();
 
-        FirebaseRecyclerAdapter<Message, MessageViewHolder> adapter =
+        final FirebaseRecyclerAdapter<Message, MessageViewHolder> adapter =
                 new FirebaseRecyclerAdapter<Message, MessageViewHolder>
                         (options) {
                     @Override
@@ -139,6 +138,7 @@ public class Main_chat_activity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
+                overridePendingTransition(0, 0);
                 Message userMessage = new Message(
                         userMessageInput.getText().toString(),
                         currentUser,
@@ -150,6 +150,8 @@ public class Main_chat_activity extends AppCompatActivity {
                         .child(chatroomPath).push().setValue(userMessage);
 
                 userMessageInput.getText().clear();
+
+                listOfMessages.smoothScrollToPosition(adapter.getItemCount() - 1);
             }
         };
 
