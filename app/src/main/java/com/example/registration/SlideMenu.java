@@ -1,9 +1,7 @@
 package com.example.registration;
 
 import android.content.Intent;
-import com.example.registration.User;
 
-import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -17,7 +15,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,15 +26,23 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import java.util.Objects;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class SlideMenu extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
-    private ActionBarDrawerToggle mToggle;
+    ActionBarDrawerToggle mToggle;
 
     FirebaseUser firebaseUser;
     DatabaseReference reference;
+
+    NavigationView navigationView;
+    CircleImageView imageCircle;
+    TextView username;
+    View headerView;
+    TextView email;
+
+    DrawerLayout mDrawerLayout;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -45,17 +50,28 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slide_menu);
-        DrawerLayout mDrawerLayout = findViewById(R.id.slide_menu);
+        mDrawerLayout = findViewById(R.id.slide_menu);
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+
         updateInfo();
+
+        if(savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).commit();
+            navigationView.setCheckedItem(R.id.profile);
+        }
     }
 
     public void updateInfo(){
+       navigationView = findViewById(R.id.nav_view);
+       headerView = navigationView.getHeaderView(0);
+       imageCircle = headerView.findViewById(R.id.profile_photo);
+       email = headerView.findViewById(R.id.textView2);
+       username = headerView.findViewById(R.id.textView1);
+
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference().child("/users/" + firebaseUser.getUid());
         Log.d("Heh", "////" + reference.toString());
@@ -63,49 +79,40 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                final TextView username = findViewById(R.id.textView1);
-                final TextView email = findViewById(R.id.textView2);
                 username.setText(user.getUsername());
                 email.setText(user.getEmail());
-                ImageView imageCircle = findViewById(R.id.profile_photo);
-                Log.d("URL", "////" + reference.toString());
                 Picasso.get().load(user.getProfileImageUrl()).into(imageCircle);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
-
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         int id = menuItem.getItemId();
         switch (id){
+            case R.id.profile:
+                setTitle("Profile");
+                ProfileFragment fragment = new ProfileFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+                break;
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(SlideMenu.this, LoginIn.class);
-                startActivity(intent);
                 finish();
+                startActivity(intent);
                 break;
-            case R.id.private_messages:
-                Intent intentPM = new Intent(SlideMenu.this, EnterPrivateMessage.class);
-                startActivity(intentPM);
-                break;
-            case R.id.chatroom_messages:
-                Intent intentCM = new Intent(SlideMenu.this, EnterChatroomMessage.class);
-                startActivity(intentCM);
-                break;
-            case R.id.create_chatroom:
-                Intent intentCC = new Intent(SlideMenu.this, CreateChatroom.class);
-                startActivity(intentCC);
-                break;
+            case R.id.chatrooms:
+                setTitle("Chats");
+                ChatsFragment fragment1 = new ChatsFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment1).commit();
             default:
         }
-        DrawerLayout drawer = findViewById(R.id.slide_menu);
-        drawer.closeDrawer(GravityCompat.START);
+        mDrawerLayout = findViewById(R.id.slide_menu);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 

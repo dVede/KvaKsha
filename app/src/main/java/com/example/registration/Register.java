@@ -38,8 +38,25 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class Register extends AppCompatActivity implements
         View.OnClickListener {
+    DatabaseReference ref;
+    FirebaseAuth mAuth;
+    StorageReference imageRef;
+
+    String uid;
+    String usernameFound;
+    String emailFound;
+    String passwordFound;
+    String filename;
+
+    CircleImageView imageCircle;
+    EditText username;
+    EditText password;
+    EditText email;
+    Button photo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,23 +81,22 @@ public class Register extends AppCompatActivity implements
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            ImageView imageCircle = findViewById(R.id.selectphoto_imagevies_circle);
-            Button photo = findViewById(R.id.selectphoto_button_register);
+            imageCircle = findViewById(R.id.selectphoto_imagevies_circle);
+            photo = findViewById(R.id.selectphoto_button_register);
             imageCircle.setImageBitmap(bitmap);
             photo.setAlpha(0f);
-
         }
     }
 
     public void uploadImageToStorage(){
-        String filename = UUID.randomUUID().toString();
-        final StorageReference ref = FirebaseStorage.getInstance().getReference("/image/" + filename);
-        ref.putFile(selectedPhoto).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        filename = UUID.randomUUID().toString();
+        imageRef = FirebaseStorage.getInstance().getReference("/image/" + filename);
+        imageRef.putFile(selectedPhoto).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Log.d("RegisterActivity", "Successfully uploaded image:" + Objects.requireNonNull(taskSnapshot.getMetadata()).getPath());
-                ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
                         Log.d("RegisterActivity", "FileLocation " + uri);
@@ -97,17 +113,17 @@ public class Register extends AppCompatActivity implements
     }
 
     private void saveUserInDatabase (String profileImageUrl) {
-        String uid = FirebaseAuth.getInstance().getUid();
+        uid = FirebaseAuth.getInstance().getUid();
+        ref = FirebaseDatabase.getInstance().getReference();
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-        EditText email = findViewById(R.id.email_edittext_register);
-        EditText username = findViewById(R.id.username_edittext_register);
+        email = findViewById(R.id.email_edittext_register);
+        username = findViewById(R.id.username_edittext_register);
         User user = new User(email.getText().toString(), uid, profileImageUrl, username.getText().toString());
         ref.child("/users/" + user.getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d("RegisterActivity", "Saved in Database");
-                Intent intent = new Intent(Register.this, SlideMenu.class);
+                Intent intent = new Intent(Register.this, LoginIn.class);
                 startActivity(intent);
                 finish();
 
@@ -128,29 +144,30 @@ public class Register extends AppCompatActivity implements
     }
 
     public void register() {
+        username = findViewById(R.id.username_edittext_register);
+        email = findViewById(R.id.email_edittext_register);
+        password = findViewById(R.id.password_eddittext_register);
 
-        EditText username = findViewById(R.id.username_edittext_register);
-        EditText email = findViewById(R.id.email_edittext_register);
-        EditText password = findViewById(R.id.password_eddittext_register);
+        usernameFound = username.getText().toString();
+        emailFound = email.getText().toString();
+        passwordFound = password.getText().toString();
 
-        final String usernameFound = username.getText().toString();
-        final String emailFound = email.getText().toString();
-        final String passwordFound = password.getText().toString();
-        Query usernameQuery = FirebaseDatabase.getInstance().getReference().child("users").orderByChild("username").equalTo(usernameFound);
-
-        if (emailFound.isEmpty() || passwordFound.isEmpty()) {
-            Toast.makeText(Register.this, "Please enter text in email/pw", Toast.LENGTH_LONG).show();
-            return;
+        if (emailFound.isEmpty() || passwordFound.isEmpty() || usernameFound.isEmpty()) {
+            Toast.makeText(Register.this, "All fields are required", Toast.LENGTH_SHORT).show();
         }
 
+        if (passwordFound.length() < 6){
+            Toast.makeText(Register.this, "password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+        }
+
+        Query usernameQuery = FirebaseDatabase.getInstance().getReference().child("users").orderByChild("username").equalTo(usernameFound);
         usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getChildrenCount() > 0){
-                    Toast.makeText(Register.this, "Username already taken", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Register.this, "Username already taken", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    final FirebaseAuth mAuth;
                     mAuth = FirebaseAuth.getInstance();
                     mAuth.createUserWithEmailAndPassword(emailFound, passwordFound)
                             .addOnCompleteListener(Register.this, new OnCompleteListener<AuthResult>() {
@@ -169,9 +186,9 @@ public class Register extends AppCompatActivity implements
                             });
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
     }
@@ -190,7 +207,7 @@ public class Register extends AppCompatActivity implements
 }
 
 class User{
-    String username, uid, profileImageUrl, email;
+    private String username, uid, profileImageUrl, email;
 
     User(String email, String uid, String profileImageUrl, String username) {
         this.username = username;
@@ -202,7 +219,7 @@ class User{
 
     }
 
-    public String getUid() {
+    String getUid() {
         return uid;
     }
 
@@ -210,7 +227,7 @@ class User{
         this.uid = uid;
     }
 
-    public String getUsername() {
+    String getUsername() {
         return username;
     }
 
@@ -218,7 +235,7 @@ class User{
         this.username = username;
     }
 
-    public String getProfileImageUrl() {
+    String getProfileImageUrl() {
         return profileImageUrl;
     }
 
@@ -226,7 +243,7 @@ class User{
         this.profileImageUrl = profileImageUrl;
     }
 
-    public String getEmail() {
+    String getEmail() {
         return email;
     }
 
