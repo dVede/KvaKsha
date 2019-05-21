@@ -87,6 +87,8 @@ public class ChatsFragment extends Fragment {
 
             }
         });
+
+
         return view;
     }
 
@@ -104,9 +106,10 @@ public class ChatsFragment extends Fragment {
 
                     for (String id : usersList){
                         if (user.getUid().equals(id)){
-                            if (mUser.size() != 0){
-                                for (User user1: mUser){
-                                    if (!user.getUid().equals(user1.getUid())){
+                            if (mUser.size() != 0) {
+                                for (int i = 0; i < 1 ; i++) {
+                                    User user1 = mUser.get(i);
+                                    if (!user.getUid().equals(user1.getUid())) {
                                         mUser.add(user);
                                     }
                                 }
@@ -114,6 +117,7 @@ public class ChatsFragment extends Fragment {
                                 mUser.add(user);
                             }
                         }
+
                     }
                 }
                 userAdap = new UserAdap(getContext(), mUser);
