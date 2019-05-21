@@ -97,7 +97,7 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
             case R.id.profile:
                 setTitle("Profile");
                 ProfileFragment fragment = new ProfileFragment();
-                getSupportFragmentManager().beginTransaction() .replace(R.id.fragment_container, fragment).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
                 break;
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
@@ -105,18 +105,10 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
                 finish();
                 startActivity(intent);
                 break;
-            case R.id.private_messages:
-                Intent intentPM = new Intent(SlideMenu.this, EnterPrivateMessage.class);
-                startActivity(intentPM);
-                break;
-            case R.id.chatroom_messages:
-                Intent intentCM = new Intent(SlideMenu.this, EnterChatroomMessage.class);
-                startActivity(intentCM);
-                break;
-            case R.id.create_chatroom:
-                Intent intentCC = new Intent(SlideMenu.this, CreateChatroom.class);
-                startActivity(intentCC);
-                break;
+            case R.id.chatrooms:
+                setTitle("Chats");
+                ChatsFragment fragment1 = new ChatsFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment1).commit();
             default:
         }
         mDrawerLayout = findViewById(R.id.slide_menu);

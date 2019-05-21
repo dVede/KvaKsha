@@ -7,18 +7,21 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import com.firebase.ui.database.FirebaseListAdapter;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 
@@ -26,77 +29,136 @@ public class Main_chat_activity extends AppCompatActivity {
     String chatroomPath;
     String currentUser;
     Uri photoURL;
+    String currentUID;
+    FirebaseRecyclerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Bundle arguments = getIntent().getExtras();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatroom);
+        getSupportActionBar().setTitle(arguments.get("chatroomName").toString());
+        //TODO: get the username of the other user after the UID's will be stored in chatrooms
         //TODO: set slider here
 
 
-        Bundle arguments = getIntent().getExtras();
+
+
         chatroomPath = "/chatrooms/" + arguments.get("chatroomName").toString() + "/messages";
 
         final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseDatabase.getInstance().getReference().child("/users/")
                 .addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot child: dataSnapshot.getChildren()){
-                    if(child.getKey().equals(uid)){
-                        currentUser = child.child("/username/").getValue().toString();
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot child: dataSnapshot.getChildren()){
+                            if(child.getKey().equals(uid)){
+                                currentUser = child.child("/username/").getValue().toString();
+                                currentUID = uid;
+                            }
+                        }
                     }
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+
         photoURL = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl();
 
         Log.d("ChatActivity", "getting the chatroom path, current user and URL");
 
 
-        ListView listOfMessages = findViewById(R.id.list_of_messages);
-        FirebaseListAdapter<Message> adapter = new FirebaseListAdapter<Message>(this, Message.class,
-                R.layout.message, FirebaseDatabase.getInstance().getReference().child(chatroomPath)){
-            @Override
-            protected void populateView(View v, Message model, int position) {
-                TextView messageText = v.findViewById(R.id.message_text);
-                TextView messageUser = v.findViewById(R.id.message_user);
-                TextView messageTime = v.findViewById(R.id.message_time);
+        final RecyclerView listOfMessages = findViewById(R.id.list_of_messages);
+        listOfMessages.setHasFixedSize(false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        listOfMessages.setLayoutManager(layoutManager);
 
-                messageText.setText(model.getText());
-                messageUser.setText(model.getUser());
-                messageTime.setText(model.getTime());
-            }
+        Query query = FirebaseDatabase.getInstance().getReference().child(chatroomPath).limitToLast(50);
 
-        };
+        FirebaseRecyclerOptions<Message> options =
+                new FirebaseRecyclerOptions.Builder<Message>()
+                        .setQuery(query, Message.class)
+                        .build();
+
+        final FirebaseRecyclerAdapter<Message, MessageViewHolder> adapter =
+                new FirebaseRecyclerAdapter<Message, MessageViewHolder>
+                        (options) {
+                    @Override
+                    protected void onBindViewHolder(@NonNull MessageViewHolder holder, int position, @NonNull Message model) {
+                        //setting the view of a single message
+                        holder.setMessage(model);
+                        Log.d("chatActivity", "catched a new message, yay");
+                    }
+
+                    @Override
+                    public int getItemViewType(int position){
+                        //if it is our message - return 1
+                        //if it was sent by the other person - return 0
+                        try {
+                            if (currentUID.equals(getItem(position).getSender())) return 1;
+                            else return 0;
+                        } catch (NullPointerException e) {
+                            System.out.println(currentUID);
+                            System.out.println(getItem(position).getSender());
+
+                            e.printStackTrace();
+                        }
+                        return 0;
+                    }
+
+                    @Override
+                    public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                        if(viewType == 0) {
+                            View view = LayoutInflater.from(parent.getContext())
+                                    .inflate(R.layout.message, parent, false);
+                            return new MessageViewHolder(view);
+                        }
+                        else if (viewType == 1){
+                            View view = LayoutInflater.from(parent.getContext())
+                                    .inflate(R.layout.this_user_message, parent, false);
+                            return new MessageViewHolder(view);
+                        }
+                        else{
+                            throw new RuntimeException("incorrect type while trying to get viewType");
+                        }
+                    }
+                };
+        adapter.startListening();
         listOfMessages.setAdapter(adapter);
 
 
-        FloatingActionButton sendMessageButton =
+        final FloatingActionButton sendMessageButton =
                 findViewById(R.id.fab);
+
+        final EditText userMessageInput = findViewById(R.id.messageInput);
 
         View.OnClickListener fabClickListener = new View.OnClickListener(){
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
-                EditText userMessageInput = findViewById(R.id.input);
-
+                overridePendingTransition(0, 0);
                 Message userMessage = new Message(
                         userMessageInput.getText().toString(),
                         currentUser,
-                        photoURL
-                        );
+                        photoURL,
+                        currentUID
+                );
 
-                DatabaseReference messageID = FirebaseDatabase.getInstance().getReference().child(chatroomPath).push();
-                messageID.setValue(userMessage);
+                FirebaseDatabase.getInstance().getReference()
+                        .child(chatroomPath).push().setValue(userMessage);
 
-                userMessageInput.setText("");
+                userMessageInput.getText().clear();
+
+                if(adapter.getItemCount() >= 1){
+                    listOfMessages.smoothScrollToPosition(adapter.getItemCount() - 1);
+                }
             }
         };
+
         sendMessageButton.setOnClickListener(fabClickListener);
     }
+
+
 }

@@ -30,6 +30,9 @@ public class EnterPrivateMessage extends AppCompatActivity {
     FirebaseUser firebaseUser;
     DatabaseReference ref;
 
+    String uid1;
+    String uid2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +61,8 @@ public class EnterPrivateMessage extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 final User currentUser = dataSnapshot.getValue(User.class);
                                 final String currentUsername = currentUser.getUsername();
+                                uid2 = currentUser.getUid();
+
                                 Query usernameQuery = FirebaseDatabase.getInstance().getReference().child("users").orderByChild("username").equalTo(username);
                                 usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
@@ -74,7 +79,6 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                                         }
                                                         IntentWithData(privateChatroomName);
                                                     }
-
                                                     @Override
                                                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -97,13 +101,31 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                                                 if (dataSnapshot.getChildrenCount() > 0) {
                                                                     IntentWithData(otherChatroomName);
                                                                 } else {
-                                                                    ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom(chatroomName));
-                                                                    IntentWithData(chatroomName);
-                                                                }
 
+                                                                    Query query = ref.child("/users/").orderByChild("username").equalTo(username);
+                                                                    query.addValueEventListener(new ValueEventListener() {
+                                                                        @Override
+                                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                            if(dataSnapshot.exists()){
+                                                                                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                                                                    uid1 = snapshot.getKey();
+                                                                                    ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom(chatroomName, uid1 , uid2));
+                                                                                    IntentWithData(chatroomName);
+                                                                                }
+
+                                                                            }
+                                                                        }
+
+                                                                        @Override
+                                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                                        }
+                                                                    });
+                                                                }
                                                             }
 
-                                                            @Override
+                                                             @Override
+
                                                             public void onCancelled(@NonNull DatabaseError databaseError) {
 
                                                             }
