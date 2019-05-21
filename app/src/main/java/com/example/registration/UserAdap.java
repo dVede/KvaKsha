@@ -68,9 +68,7 @@ public class UserAdap extends RecyclerView.Adapter<UserAdap.ViewHolder> {
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, Main_chat_activity.class);
-                intent.putExtra("chatroomName", chatroomName(username1, username2));
-                mContext.startActivity(intent);
+                chatroomName(username1, username2);
             }
         });
     }
@@ -107,7 +105,9 @@ public class UserAdap extends RecyclerView.Adapter<UserAdap.ViewHolder> {
                 } else{
                     finalname[0] = otherChatroomName;
                 }
+                IntentWithData(finalname[0]);
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -115,5 +115,10 @@ public class UserAdap extends RecyclerView.Adapter<UserAdap.ViewHolder> {
             }
         });
         return finalname[0];
+    }
+    private void IntentWithData(String chatroomName){
+        Intent intent = new Intent(mContext, Main_chat_activity.class);
+        intent.putExtra("chatroomName", chatroomName);
+        mContext.startActivity(intent);
     }
 }

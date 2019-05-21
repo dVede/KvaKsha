@@ -62,25 +62,24 @@ public class ChatsFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 usersList.clear();
-                if (dataSnapshot.toString().contains("@")){
-                    for (DataSnapshot snapshot: dataSnapshot.getChildren()){
-                        DataSnapshot message = snapshot.child("/messages");
-                        for (DataSnapshot snapshot1: message.getChildren()){
-                           Message messages = snapshot1.getValue(Message.class);
-                            System.out.println(messages.toString());
-                            if (messages.getSender().equals(fUser.getUid())){
-                                usersList.add(messages.getReceiver());
-                            }
-                            if (messages.getReceiver().equals(fUser.getUid())){
-                                usersList.add(messages.getSender());
-                            }
+                    for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                       if (snapshot.toString().contains("@")) {
+                           System.out.println(snapshot);
+                           System.out.println(snapshot);
+                           System.out.println(snapshot);
+                           System.out.println(snapshot);
+                           System.out.println(snapshot);
+
+                            Chatroom chatroom = snapshot.getValue(Chatroom.class);
+                                if (chatroom.getUid1().equals(fUser.getUid())) {
+                                    usersList.add(chatroom.getUid2());
+                                }
+                                if (chatroom.getUid2().equals(fUser.getUid())) {
+                                    usersList.add(chatroom.getUid1());
+                                }
                         }
                     }
                 readChats();
-               }
-               else{
-                   //TODO() for chatrooms(image)
-                }
             }
 
             @Override
@@ -93,7 +92,7 @@ public class ChatsFragment extends Fragment {
 
     private void readChats(){
         mUser = new ArrayList<>();
-        reference = FirebaseDatabase.getInstance().getReference().child("/users");
+        reference = FirebaseDatabase.getInstance().getReference().child("/users/");
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -120,7 +119,6 @@ public class ChatsFragment extends Fragment {
                 userAdap = new UserAdap(getContext(), mUser);
                 recyclerView.setAdapter(userAdap);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -128,7 +126,6 @@ public class ChatsFragment extends Fragment {
         });
 
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
