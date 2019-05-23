@@ -50,20 +50,20 @@ public class Main_chat_activity extends AppCompatActivity {
         final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseDatabase.getInstance().getReference().child("/users/")
                 .addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot child: dataSnapshot.getChildren()){
-                    if(child.getKey().equals(uid)){
-                        currentUser = child.child("/username/").getValue().toString();
-                        currentUID = uid;
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot child: dataSnapshot.getChildren()){
+                            if(child.getKey().equals(uid)){
+                                currentUser = child.child("/username/").getValue().toString();
+                                currentUID = uid;
+                            }
+                        }
                     }
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
 
         photoURL = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl();
 
@@ -144,7 +144,7 @@ public class Main_chat_activity extends AppCompatActivity {
                         currentUser,
                         photoURL,
                         currentUID
-                        );
+                );
 
                 FirebaseDatabase.getInstance().getReference()
                         .child(chatroomPath).push().setValue(userMessage);
@@ -152,7 +152,7 @@ public class Main_chat_activity extends AppCompatActivity {
                 userMessageInput.getText().clear();
 
                 if(adapter.getItemCount() >= 1){
-                listOfMessages.smoothScrollToPosition(adapter.getItemCount() - 1);
+                    listOfMessages.smoothScrollToPosition(adapter.getItemCount() - 1);
                 }
             }
         };
