@@ -7,7 +7,7 @@
     android:background="@color/colorPrimaryDark">
 
     <EditText
-        android:id="@+id/pm_userna"
+        android:id="@+id/pm_username"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="32dp"
@@ -25,14 +25,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/enter_"
+        android:id="@+id/enter_pm"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="Enter"
         android:background="@drawable/rounded"
-        app:layout_constraintEnd_toEndOf="@+id/pm_userna"
+        app:layout_constraintEnd_toEndOf="@+id/pm_username"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/pm_userna"
-        app:layout_constraintTop_toBottomOf="@+id/pm_userna" />
+        app:layout_constraintStart_toStartOf="@+id/pm_username"
+        app:layout_constraintTop_toBottomOf="@+id/pm_username" />
+    <FrameLayout
+        android:id="@+id/fragment_container_one"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </android.support.constraint.ConstraintLayout>

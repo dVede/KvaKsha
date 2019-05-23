@@ -62,23 +62,27 @@ public class ChatsFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 usersList.clear();
-                    for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                       if (snapshot.toString().contains("@")) {
-                           System.out.println(snapshot);
-                           System.out.println(snapshot);
-                           System.out.println(snapshot);
-                           System.out.println(snapshot);
-                           System.out.println(snapshot);
-
-                            Chatroom chatroom = snapshot.getValue(Chatroom.class);
-                                if (chatroom.getUid1().equals(fUser.getUid())) {
-                                    usersList.add(chatroom.getUid2());
-                                }
-                                if (chatroom.getUid2().equals(fUser.getUid())) {
-                                    usersList.add(chatroom.getUid1());
-                                }
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                    if (snapshot.toString().contains("@")) {
+                        boolean flag = false;
+                        for (DataSnapshot d : snapshot.child("/users/").getChildren()) {
+                            if (d.getValue().toString().equals(fUser.getUid())) {
+                                flag = true;
+                            }
                         }
+                        if (flag) {
+                            for (DataSnapshot d : snapshot.child("/users/").getChildren()) {
+                                if (!(d.getValue().toString().equals(fUser.getUid()))) {
+                                    usersList.add(d.getValue().toString());
+                                }
+                            }
+                        }
+                        if (usersList.isEmpty()) {
+                            usersList.add(fUser.getUid());
+                        }
+
                     }
+                }
                 readChats();
             }
 
@@ -134,6 +138,7 @@ public class ChatsFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        Fragment fragment;
         switch (id){
             case R.id.create_chatroom:
                 Intent intentCC = new Intent(getActivity(), CreateChatroom.class);

@@ -30,15 +30,15 @@ public class EnterPrivateMessage extends AppCompatActivity {
     FirebaseUser firebaseUser;
     DatabaseReference ref;
 
-    String uid1;
-    String uid2;
+    String userUid;
+    String currentUserUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter_private_message);
 
-        final Button button = findViewById(R.id.enter_pm);
+        final Button button = findViewById(R.id.enter_);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,7 +49,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        EditText user = findViewById(R.id.pm_username);
+                        EditText user = findViewById(R.id.pm_userna);
                         final String username = user.getText().toString();
 
                         if (username.isEmpty()) {
@@ -61,8 +61,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 final User currentUser = dataSnapshot.getValue(User.class);
                                 final String currentUsername = currentUser.getUsername();
-                                uid2 = currentUser.getUid();
-
+                                currentUserUid = currentUser.getUid();
                                 Query usernameQuery = FirebaseDatabase.getInstance().getReference().child("users").orderByChild("username").equalTo(username);
                                 usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
@@ -75,7 +74,8 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                                     @Override
                                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                         if (dataSnapshot.getChildrenCount() == 0) {
-                                                            ref.child("/chatrooms/" + "@" + currentUsername).setValue(new Chatroom(privateChatroomName));
+                                                            ref.child("/chatrooms/" + privateChatroomName).setValue(new Chatroom(privateChatroomName));
+                                                            ref.child("/chatrooms/" + privateChatroomName + "/users/" + currentUsername).setValue(currentUserUid);
                                                         }
                                                         IntentWithData(privateChatroomName);
                                                     }
@@ -108,8 +108,10 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                                             if(dataSnapshot.exists()){
                                                                                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                                                                                    uid1 = snapshot.getKey();
-                                                                                    ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom(chatroomName, uid1 , uid2));
+                                                                                    userUid = snapshot.getKey();
+                                                                                    ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom(chatroomName));
+                                                                                    ref.child("/chatrooms/" + chatroomName + "/users/" + currentUsername).setValue(currentUserUid);
+                                                                                    ref.child("/chatrooms/" + chatroomName + "/users/" + username).setValue(userUid);
                                                                                     IntentWithData(chatroomName);
                                                                                 }
 
