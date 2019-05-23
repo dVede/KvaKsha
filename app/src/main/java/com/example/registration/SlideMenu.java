@@ -6,6 +6,8 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -46,7 +48,7 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
-    protected void onCreate(Bundle savedInstanceState) { //TODO: replace placeholders in header.xml
+    protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slide_menu);
@@ -132,5 +134,14 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
         } else {
             super.onBackPressed();
         }
+    }
+
+    public void startChatting(Bundle data) {
+        Fragment chatFragment = new MainChatFragment();
+        chatFragment.setArguments(data);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, chatFragment);
+        transaction.show(chatFragment);
+        transaction.commit();
     }
 }
