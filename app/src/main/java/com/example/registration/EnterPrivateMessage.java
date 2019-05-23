@@ -30,12 +30,15 @@ public class EnterPrivateMessage extends AppCompatActivity {
     FirebaseUser firebaseUser;
     DatabaseReference ref;
 
+    String userUid;
+    String currentUserUid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter_private_message);
 
-        final Button button = findViewById(R.id.enter_pm);
+        final Button button = findViewById(R.id.enter_button_cm);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +61,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 final User currentUser = dataSnapshot.getValue(User.class);
                                 final String currentUsername = currentUser.getUsername();
+                                currentUserUid = currentUser.getUid();
                                 Query usernameQuery = FirebaseDatabase.getInstance().getReference().child("users").orderByChild("username").equalTo(username);
                                 usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
@@ -70,11 +74,11 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                                     @Override
                                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                         if (dataSnapshot.getChildrenCount() == 0) {
-                                                            ref.child("/chatrooms/" + "@" + currentUsername).setValue(new Chatroom(privateChatroomName));
+                                                            ref.child("/chatrooms/" + privateChatroomName).setValue(new Chatroom(privateChatroomName));
+                                                            ref.child("/chatrooms/" + privateChatroomName + "/users/" + currentUsername).setValue(currentUserUid);
                                                         }
                                                         IntentWithData(privateChatroomName);
                                                     }
-
                                                     @Override
                                                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -97,13 +101,33 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                                                 if (dataSnapshot.getChildrenCount() > 0) {
                                                                     IntentWithData(otherChatroomName);
                                                                 } else {
-                                                                    ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom(chatroomName));
-                                                                    IntentWithData(chatroomName);
-                                                                }
 
+                                                                    Query query = ref.child("/users/").orderByChild("username").equalTo(username);
+                                                                    query.addValueEventListener(new ValueEventListener() {
+                                                                        @Override
+                                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                            if(dataSnapshot.exists()){
+                                                                                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                                                                    userUid = snapshot.getKey();
+                                                                                    ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom(chatroomName));
+                                                                                    ref.child("/chatrooms/" + chatroomName + "/users/" + currentUsername).setValue(currentUserUid);
+                                                                                    ref.child("/chatrooms/" + chatroomName + "/users/" + username).setValue(userUid);
+                                                                                    IntentWithData(chatroomName);
+                                                                                }
+
+                                                                            }
+                                                                        }
+
+                                                                        @Override
+                                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                                        }
+                                                                    });
+                                                                }
                                                             }
 
-                                                            @Override
+                                                             @Override
+
                                                             public void onCancelled(@NonNull DatabaseError databaseError) {
 
                                                             }

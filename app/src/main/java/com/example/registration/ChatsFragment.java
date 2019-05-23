@@ -62,19 +62,27 @@ public class ChatsFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 usersList.clear();
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                    if (snapshot.toString().contains("@")) {
+                        boolean flag = false;
+                        for (DataSnapshot d : snapshot.child("/users/").getChildren()) {
+                            if (d.getValue().toString().equals(fUser.getUid())) {
+                                flag = true;
+                            }
+                        }
+                        if (flag) {
+                            for (DataSnapshot d : snapshot.child("/users/").getChildren()) {
+                                if (!(d.getValue().toString().equals(fUser.getUid()))) {
+                                    usersList.add(d.getValue().toString());
+                                }
+                            }
+                        }
+                        if (usersList.isEmpty()) {
+                            usersList.add(fUser.getUid());
+                        }
 
-              //  for (DataSnapshot snapshot: dataSnapshot.getChildren()){
-              //      DataSnapshot message = snapshot.child("messages/");
-              //      for (DataSnapshot snapshot1: message.getChildren()){
-              //         Message messages = snapshot1.getValue(Message.class);
-              //         if (messages.getSender().equals(fUser.getUid())){
-              //              usersList.add(messages.getReceiver());
-              //          }
-              //          if (messages.getReceiver().equals(fUser.getUid())){
-                //          usersList.add(messages.getSender());
-                //        }
-               //     }
-              //  }
+                    }
+                }
                 readChats();
             }
 
@@ -83,12 +91,14 @@ public class ChatsFragment extends Fragment {
 
             }
         });
+
+
         return view;
     }
 
     private void readChats(){
         mUser = new ArrayList<>();
-        reference = FirebaseDatabase.getInstance().getReference().child("/users");
+        reference = FirebaseDatabase.getInstance().getReference().child("/users/");
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -100,9 +110,10 @@ public class ChatsFragment extends Fragment {
 
                     for (String id : usersList){
                         if (user.getUid().equals(id)){
-                            if (mUser.size() != 0){
-                                for (User user1: mUser){
-                                    if (!user.getUid().equals(user1.getUid())){
+                            if (mUser.size() != 0) {
+                                for (int i = 0; i < 1 ; i++) {
+                                    User user1 = mUser.get(i);
+                                    if (!user.getUid().equals(user1.getUid())) {
                                         mUser.add(user);
                                     }
                                 }
@@ -110,12 +121,12 @@ public class ChatsFragment extends Fragment {
                                 mUser.add(user);
                             }
                         }
+
                     }
                 }
                 userAdap = new UserAdap(getContext(), mUser);
                 recyclerView.setAdapter(userAdap);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -124,10 +135,10 @@ public class ChatsFragment extends Fragment {
 
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        Fragment fragment;
         switch (id){
             case R.id.create_chatroom:
                 Intent intentCC = new Intent(getActivity(), CreateChatroom.class);
