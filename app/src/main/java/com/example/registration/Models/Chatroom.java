@@ -1,4 +1,4 @@
-package com.example.registration;
+package com.example.registration.Models;
 
 public class Chatroom {
 
@@ -9,15 +9,15 @@ public class Chatroom {
     String uid2;
 
     Chatroom(){}
-    Chatroom(String chatroomName){
+    public Chatroom(String chatroomName){
         this.chatroomName = chatroomName;
     }
-    Chatroom(String chatroomName, String uid1, String uid2){
+    public Chatroom(String chatroomName, String uid1, String uid2){
         this.chatroomName = chatroomName;
         this.uid1 = uid1;
         this.uid2 = uid2;
     }
-    Chatroom(String chatroomName, String pw){
+    public Chatroom(String chatroomName, String pw){
         this.chatroomName = chatroomName;
         this.pw = pw;
     }
