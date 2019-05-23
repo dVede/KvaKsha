@@ -49,7 +49,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        EditText user = findViewById(R.id.pm_username);
+                        EditText user = findViewById(R.id.pm_userna);
                         final String username = user.getText().toString();
 
                         if (username.isEmpty()) {

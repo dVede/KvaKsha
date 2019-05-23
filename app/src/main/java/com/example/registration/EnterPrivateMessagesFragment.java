@@ -50,7 +50,7 @@ public class EnterPrivateMessagesFragment extends Fragment {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        EditText user = view.findViewById(R.id.pm_username);
+                        EditText user = view.findViewById(R.id.pm_userna);
                         final String username = user.getText().toString();
 
                         if (true) {
