@@ -38,7 +38,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter_private_message);
 
-        final Button button = findViewById(R.id.enter_button_cm);
+        final Button button = findViewById(R.id.enter_);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override

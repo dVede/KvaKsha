@@ -7,7 +7,7 @@
     android:background="@color/colorPrimaryDark">
 
     <EditText
-        android:id="@+id/pm_userna"
+        android:id="@+id/pm_username"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="32dp"
