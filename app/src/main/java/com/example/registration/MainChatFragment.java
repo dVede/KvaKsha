@@ -29,7 +29,6 @@ public class MainChatFragment extends Fragment {
     String currentUser;
     Uri photoURL;
     String currentUID;
-    FirebaseRecyclerAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup vg, Bundle state) {
