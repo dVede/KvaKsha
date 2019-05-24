@@ -33,7 +33,7 @@ public class EnterPrivateMessagesFragment extends Fragment {
     String uid2;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_enter_private_messages, container, false);
 
@@ -55,7 +55,6 @@ public class EnterPrivateMessagesFragment extends Fragment {
                             Toast.makeText(getActivity(), "Please enter text in Username" + user, Toast.LENGTH_SHORT).show();
                             return;
                         }
-
                         ref.child("/users/" + firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
