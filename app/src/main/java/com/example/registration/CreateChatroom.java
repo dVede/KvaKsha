@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.registration.Models.Chatroom;
 import com.example.registration.Models.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -119,7 +120,7 @@ public class CreateChatroom extends AppCompatActivity {
                                             imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                 @Override
                                                 public void onSuccess(Uri uri) {
-                                                    ref.child("/chatrooms/" + chatroomName).setValue(new com.example.registration.Chatroom(chatroomName, chatroomPassword, uri.toString()));
+                                                    ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom(chatroomName, chatroomPassword, uri.toString()));
                                                     ref.child("/chatrooms/" + chatroomName + "/users/" + currentUsername).setValue(currentUid);
                                                     Intent intent = new Intent(CreateChatroom.this, Main_chat_activity.class);
                                                     intent.putExtra("chatroomName", chatroomName);
