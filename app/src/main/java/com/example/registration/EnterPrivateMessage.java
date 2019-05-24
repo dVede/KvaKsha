@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.registration.Models.Chatroom;
 import com.example.registration.Models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -75,7 +76,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                                     @Override
                                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                         if (dataSnapshot.getChildrenCount() == 0) {
-                                                            ref.child("/chatrooms/" + privateChatroomName).setValue(new com.example.registration.Chatroom(privateChatroomName));
+                                                            ref.child("/chatrooms/" + privateChatroomName).setValue(new Chatroom(privateChatroomName));
                                                             ref.child("/chatrooms/" + privateChatroomName + "/users/" + currentUsername).setValue(currentUserUid);
                                                         }
                                                         IntentWithData(privateChatroomName);
@@ -110,7 +111,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                                                             if(dataSnapshot.exists()){
                                                                                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                                                                                     userUid = snapshot.getKey();
-                                                                                    ref.child("/chatrooms/" + chatroomName).setValue(new com.example.registration.Chatroom(chatroomName));
+                                                                                    ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom(chatroomName));
                                                                                     ref.child("/chatrooms/" + chatroomName + "/users/" + currentUsername).setValue(currentUserUid);
                                                                                     ref.child("/chatrooms/" + chatroomName + "/users/" + username).setValue(userUid);
                                                                                     IntentWithData(chatroomName);
