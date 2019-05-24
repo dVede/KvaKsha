@@ -40,6 +40,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
         getSupportActionBar().setTitle("Entrance to private messages");
 
         final Button button = findViewById(R.id.enter_);
+        int i = 1;
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
