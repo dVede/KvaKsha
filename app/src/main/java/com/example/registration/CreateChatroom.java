@@ -119,7 +119,8 @@ public class CreateChatroom extends AppCompatActivity {
                                             imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                 @Override
                                                 public void onSuccess(Uri uri) {
-                                                    ref.child("/chatrooms/" + chatroomName).setValue(new com.example.registration.Chatroom(chatroomName, chatroomPassword, uri.toString()));
+                                                    ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom(chatroomName, chatroomPassword, uri.toString()));
+
                                                     ref.child("/chatrooms/" + chatroomName + "/users/" + currentUsername).setValue(currentUid);
                                                     Intent intent = new Intent(CreateChatroom.this, Main_chat_activity.class);
                                                     intent.putExtra("chatroomName", chatroomName);
