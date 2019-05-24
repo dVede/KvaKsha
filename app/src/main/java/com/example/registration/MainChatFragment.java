@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,28 +25,26 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-
-public class Main_chat_activity extends AppCompatActivity {
+public class MainChatFragment extends Fragment {
     String chatroomPath;
     String currentUser;
     Uri photoURL;
     String currentUID;
-    FirebaseRecyclerAdapter adapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        Bundle arguments = getIntent().getExtras();
+    public View onCreateView(LayoutInflater inflater, ViewGroup vg, Bundle state) {
+        return inflater.inflate(R.layout.fragment_chatroom, vg, false);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        String chatroomName = getArguments().getString("chatroomName");
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chatroom);
-        getSupportActionBar().setTitle(arguments.get("chatroomName").toString());
-        //TODO: get the username of the other user after the UID's will be stored in chatrooms
-        //TODO: set slider here
+        //getSupportActionBar().setTitle(arguments.get("chatroomName").toString());
+        //TODO: add the action bar title changer in main activity cuz title change should be done there
 
-
-
-
-        chatroomPath = "/chatrooms/" + arguments.get("chatroomName").toString() + "/messages";
+        chatroomPath = "/chatrooms/" + chatroomName + "/messages";
 
         final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseDatabase.getInstance().getReference().child("/users/")
@@ -71,9 +69,9 @@ public class Main_chat_activity extends AppCompatActivity {
         Log.d("ChatActivity", "getting the chatroom path, current user and URL");
 
 
-        final RecyclerView listOfMessages = findViewById(R.id.list_of_messages);
+        final RecyclerView listOfMessages = getView().findViewById(R.id.frag_list_of_messages);
         listOfMessages.setHasFixedSize(false);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         listOfMessages.setLayoutManager(layoutManager);
 
         Query query = FirebaseDatabase.getInstance().getReference().child(chatroomPath).limitToLast(50);
@@ -130,16 +128,14 @@ public class Main_chat_activity extends AppCompatActivity {
         listOfMessages.setAdapter(adapter);
 
 
-        final FloatingActionButton sendMessageButton =
-                findViewById(R.id.fab);
+        final FloatingActionButton sendMessageButton = getView().findViewById(R.id.frag_fab);
 
-        final EditText userMessageInput = findViewById(R.id.messageInput);
+        final EditText userMessageInput = getView().findViewById(R.id.frag_messageInput);
 
         View.OnClickListener fabClickListener = new View.OnClickListener(){
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
-                overridePendingTransition(0, 0);
                 Message userMessage = new Message(
                         userMessageInput.getText().toString(),
                         currentUser,
@@ -160,6 +156,4 @@ public class Main_chat_activity extends AppCompatActivity {
 
         sendMessageButton.setOnClickListener(fabClickListener);
     }
-
-
 }

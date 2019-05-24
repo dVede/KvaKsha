@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.registration.Models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -37,10 +38,8 @@ public class EnterPrivateMessage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter_private_message);
-        getSupportActionBar().setTitle("Entrance to private messages");
 
         final Button button = findViewById(R.id.enter_);
-        int i = 0;
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +75,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                                     @Override
                                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                         if (dataSnapshot.getChildrenCount() == 0) {
-                                                            ref.child("/chatrooms/" + privateChatroomName).setValue(new Chatroom(privateChatroomName));
+                                                            ref.child("/chatrooms/" + privateChatroomName).setValue(new com.example.registration.Chatroom(privateChatroomName));
                                                             ref.child("/chatrooms/" + privateChatroomName + "/users/" + currentUsername).setValue(currentUserUid);
                                                         }
                                                         IntentWithData(privateChatroomName);
@@ -95,7 +94,6 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                     if (dataSnapshot.getChildrenCount() > 0) {
                                                         IntentWithData(chatroomName);
-
                                                     } else {
                                                         Query otherChatroomNameQuery = FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("chatroomName").equalTo(otherChatroomName);
                                                         otherChatroomNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -103,7 +101,6 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                                 if (dataSnapshot.getChildrenCount() > 0) {
                                                                     IntentWithData(otherChatroomName);
-
                                                                 } else {
 
                                                                     Query query = ref.child("/users/").orderByChild("username").equalTo(username);
@@ -113,7 +110,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                                                             if(dataSnapshot.exists()){
                                                                                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                                                                                     userUid = snapshot.getKey();
-                                                                                    ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom(chatroomName));
+                                                                                    ref.child("/chatrooms/" + chatroomName).setValue(new com.example.registration.Chatroom(chatroomName));
                                                                                     ref.child("/chatrooms/" + chatroomName + "/users/" + currentUsername).setValue(currentUserUid);
                                                                                     ref.child("/chatrooms/" + chatroomName + "/users/" + username).setValue(userUid);
                                                                                     IntentWithData(chatroomName);
@@ -170,6 +167,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
         Intent intent = new Intent(EnterPrivateMessage.this, Main_chat_activity.class);
         intent.putExtra("chatroomName", chatroomName);
         startActivity(intent);
+        Log.d("createSavedMessages", "throwing intent with name:"+ chatroomName );
         finish();
     }
 }
