@@ -132,7 +132,6 @@ public class Register extends AppCompatActivity implements
                 Intent intent = new Intent(Register.this, LoginIn.class);
                 startActivity(intent);
                 finish();
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -192,7 +191,6 @@ public class Register extends AppCompatActivity implements
                             });
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
@@ -218,6 +216,7 @@ public class Register extends AppCompatActivity implements
                 default:
         }
     }
+
     public void formatCheck(){
         if (passwordFound.length() < 6)
             password.setError("6 characters");
