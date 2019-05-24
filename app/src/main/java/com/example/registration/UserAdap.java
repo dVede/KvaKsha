@@ -76,7 +76,7 @@ public class UserAdap extends RecyclerView.Adapter<UserAdap.ViewHolder> {
     public int getItemCount() {
         return mUsers.size();
     }
-
+    int i = 1;
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         public TextView username;
