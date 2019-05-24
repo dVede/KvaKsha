@@ -78,8 +78,8 @@ public class EnterChatroomMessage extends AppCompatActivity {
                                             if (password.equals(chatroomPassword)){
                                                 Intent intent = new Intent(EnterChatroomMessage.this, Main_chat_activity.class);
                                                 intent.putExtra("chatroomName", chatroomName);
+
                                                 startActivity(intent);
-                                                finish();
                                             } else {
                                                 Toast.makeText(EnterChatroomMessage.this, "incorrect password", Toast.LENGTH_SHORT).show();
                                             }
