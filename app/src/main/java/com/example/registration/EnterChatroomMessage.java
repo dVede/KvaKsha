@@ -34,6 +34,7 @@ public class EnterChatroomMessage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter_chatroom_message);
+        getSupportActionBar().setTitle("Entrance to the chatroom");
 
         final Button button = findViewById(R.id.enter_button_cm);
 
@@ -77,8 +78,8 @@ public class EnterChatroomMessage extends AppCompatActivity {
                                             if (password.equals(chatroomPassword)){
                                                 Intent intent = new Intent(EnterChatroomMessage.this, Main_chat_activity.class);
                                                 intent.putExtra("chatroomName", chatroomName);
-
                                                 startActivity(intent);
+                                                finish();
                                             } else {
                                                 Toast.makeText(EnterChatroomMessage.this, "incorrect password", Toast.LENGTH_SHORT).show();
                                             }

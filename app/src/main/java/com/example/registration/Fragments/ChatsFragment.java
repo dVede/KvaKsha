@@ -80,11 +80,10 @@ public class ChatsFragment extends Fragment {
                                     usersList.add(d.getValue().toString());
                                 }
                             }
+                            if (usersList.isEmpty()) {
+                                usersList.add(fUser.getUid());
+                            }
                         }
-                        if (usersList.isEmpty()) {
-                            usersList.add(fUser.getUid());
-                        }
-
                     }
                 }
                 readChats();
@@ -142,7 +141,6 @@ public class ChatsFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        Fragment fragment;
         switch (id){
             case R.id.create_chatroom:
                 Intent intentCC = new Intent(getActivity(), CreateChatroom.class);
