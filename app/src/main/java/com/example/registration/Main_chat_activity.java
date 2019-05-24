@@ -15,12 +15,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.example.registration.Fragments.APISer;
 import com.example.registration.Models.Message;
+import com.example.registration.Notifications.Client;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
@@ -33,6 +36,7 @@ public class Main_chat_activity extends AppCompatActivity {
     String currentUID;
     FirebaseRecyclerAdapter adapter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Bundle arguments = getIntent().getExtras();
@@ -42,7 +46,6 @@ public class Main_chat_activity extends AppCompatActivity {
         getSupportActionBar().setTitle(arguments.get("chatroomName").toString());
         //TODO: get the username of the other user after the UID's will be stored in chatrooms
         //TODO: set slider here
-
 
 
 
@@ -146,7 +149,6 @@ public class Main_chat_activity extends AppCompatActivity {
                         photoURL,
                         currentUID
                 );
-
                 FirebaseDatabase.getInstance().getReference()
                         .child(chatroomPath).push().setValue(userMessage);
 
