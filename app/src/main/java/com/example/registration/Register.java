@@ -175,7 +175,6 @@ public class Register extends AppCompatActivity implements
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
                                         Log.d("emailCreateSuccess", "createUserWithEmail:success");
-                                        FirebaseUser user = mAuth.getCurrentUser();
                                         uploadImageToStorage();
                                     } else {
                                         Log.w("emailCreateFail", "createUserWithEmail:failure", task.getException());
