@@ -57,6 +57,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
                 .setContentIntent(pendingIntent);
         NotificationManager noti = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 
+
         int i = 0;
         if (j > 0){
             i = j;
