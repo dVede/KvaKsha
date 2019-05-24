@@ -1,7 +1,9 @@
 
 package com.example.registration;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -12,8 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.registration.Models.Chatroom;
-import com.example.registration.Models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -22,6 +22,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class EnterPrivateMessagesFragment extends Fragment {
 
@@ -55,7 +57,6 @@ public class EnterPrivateMessagesFragment extends Fragment {
                             Toast.makeText(getActivity(), "Please enter text in Username" + user, Toast.LENGTH_SHORT).show();
                             return;
                         }
-
                         ref.child("/users/" + firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
