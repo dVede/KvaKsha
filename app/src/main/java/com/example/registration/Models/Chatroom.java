@@ -1,4 +1,4 @@
-package com.example.registration;
+package com.example.registration.Models;
 
 import com.example.registration.Models.Message;
 
