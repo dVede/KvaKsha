@@ -63,7 +63,6 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                 final User currentUser = dataSnapshot.getValue(User.class);
                                 final String currentUsername = currentUser.getUsername();
                                 currentUserUid = currentUser.getUid();
-
                                 Query usernameQuery = FirebaseDatabase.getInstance().getReference().child("users").orderByChild("username").equalTo(username);
                                 usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
@@ -103,6 +102,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                                                 if (dataSnapshot.getChildrenCount() > 0) {
                                                                     IntentWithData(otherChatroomName);
                                                                 } else {
+
                                                                     Query query = ref.child("/users/").orderByChild("username").equalTo(username);
                                                                     query.addValueEventListener(new ValueEventListener() {
                                                                         @Override
