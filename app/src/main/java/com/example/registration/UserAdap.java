@@ -62,7 +62,6 @@ public class UserAdap extends RecyclerView.Adapter<UserAdap.ViewHolder> {
 
             }
         });
-
         viewHolder.username.setText(user.getUsername());
         Picasso.get().load(user.getProfileImageUrl()).into(viewHolder.profile_image);
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
