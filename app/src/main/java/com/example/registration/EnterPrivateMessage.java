@@ -37,6 +37,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter_private_message);
+        getSupportActionBar().setTitle("Entrance to private messages");
 
         final Button button = findViewById(R.id.enter_);
 
@@ -166,5 +167,6 @@ public class EnterPrivateMessage extends AppCompatActivity {
         Intent intent = new Intent(EnterPrivateMessage.this, Main_chat_activity.class);
         intent.putExtra("chatroomName", chatroomName);
         startActivity(intent);
+        finish();
     }
 }
