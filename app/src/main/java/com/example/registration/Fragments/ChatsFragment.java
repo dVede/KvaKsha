@@ -13,9 +13,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.registration.ChatroomAdap;
 import com.example.registration.CreateChatroom;
 import com.example.registration.EnterChatroomMessage;
 import com.example.registration.EnterPrivateMessage;
+import com.example.registration.Models.Chatroom;
 import com.example.registration.R;
 import com.example.registration.Models.User;
 import com.example.registration.UserAdap;
@@ -36,11 +38,14 @@ public class ChatsFragment extends Fragment {
 
     private UserAdap userAdap;
     private List<User> mUser;
+    private ChatroomAdap chatroomAdap;
+    private List<Chatroom> mChatrooms;
 
     FirebaseUser fUser;
     DatabaseReference reference;
 
     private List<String> usersList;
+    private List<String> chatroomsList;
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -60,11 +65,13 @@ public class ChatsFragment extends Fragment {
         fUser = FirebaseAuth.getInstance().getCurrentUser();
 
         usersList = new ArrayList<>();
+        chatroomsList = new ArrayList<>();
 
         reference = FirebaseDatabase.getInstance().getReference().child("/chatrooms/");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                chatroomsList.clear();
                 usersList.clear();
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     if (snapshot.toString().contains("@")) {
@@ -84,10 +91,18 @@ public class ChatsFragment extends Fragment {
                                 usersList.add(fUser.getUid());
                             }
                         }
+                        readChats();
+                    } else {
+                        for (DataSnapshot d : snapshot.child("/users/").getChildren()) {
+                            if (d.getValue().toString().equals(fUser.getUid())) {
+                                chatroomsList.add(snapshot.getKey());
+                                readChatroom();
+                            }
+                        }
+                        }
                     }
                 }
-                readChats();
-            }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -97,6 +112,35 @@ public class ChatsFragment extends Fragment {
 
 
         return view;
+    }
+
+    private void readChatroom(){
+        mChatrooms = new ArrayList<>();
+
+        reference = FirebaseDatabase.getInstance().getReference().child("/chatrooms/");
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mChatrooms.clear();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Chatroom chatroom = snapshot.getValue(Chatroom.class);
+
+                    for (String id : chatroomsList){
+                        if (chatroom.getChatroomName().equals(id)){
+                            mChatrooms.add(chatroom);
+                        }
+                    }
+                }
+                chatroomAdap = new ChatroomAdap(getContext(), mChatrooms);
+                recyclerView.setAdapter(chatroomAdap);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void readChats(){
@@ -127,8 +171,8 @@ public class ChatsFragment extends Fragment {
 
                     }
                 }
-                userAdap = new UserAdap(getContext(), mUser);
-                recyclerView.setAdapter(userAdap);
+                //userAdap = new UserAdap(getContext(), mUser);
+                //recyclerView.setAdapter(userAdap);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -154,7 +198,6 @@ public class ChatsFragment extends Fragment {
                 Intent intentPM = new Intent(getActivity(), EnterPrivateMessage.class);
                 startActivity(intentPM);
                 break;
-                default:
         }
         return true;
     }
