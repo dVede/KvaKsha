@@ -11,7 +11,7 @@ public class Chatroom {
     String chatroomImageUrl;
 
     Chatroom(){}
-    Chatroom(String chatroomName){
+    public Chatroom(String chatroomName){
         this.chatroomName = chatroomName;
     }
     Chatroom(String chatroomName, String pw){

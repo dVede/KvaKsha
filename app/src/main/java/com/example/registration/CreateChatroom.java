@@ -1,7 +1,6 @@
 package com.example.registration;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -11,14 +10,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.registration.Models.Chatroom;
 import com.example.registration.Models.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -32,16 +29,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -90,12 +80,12 @@ public class CreateChatroom extends AppCompatActivity {
                         final String chatroomName = createChatroomName.getText().toString();
                         final String chatroomPassword = createPasswordChatroom.getText().toString();
 
-                        if (chatroomName.contains("@")){
-                            Toast.makeText(CreateChatroom.this , "Don't use the @ symbol", Toast.LENGTH_SHORT).show();
+                        if (chatroomName.contains("@")) {
+                            Toast.makeText(CreateChatroom.this, "Don't use the @ symbol", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         if (chatroomName.isEmpty() || chatroomPassword.isEmpty()) {
-                            Toast.makeText(CreateChatroom.this , "Please enter text in chatroomName/pw", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CreateChatroom.this, "Please enter text in chatroomName/pw", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
@@ -105,44 +95,47 @@ public class CreateChatroom extends AppCompatActivity {
                                 final User currentUser = dataSnapshot.getValue(User.class);
                                 final String currentUid = currentUser.getUid();
                                 final String currentUsername = currentUser.getUsername();
-                        Query chatroomNameQuery = FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("chatroomName").equalTo(chatroomName);
-                        chatroomNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.getChildrenCount() == 0){
-                                    String filename = UUID.randomUUID().toString();
-                                    final StorageReference imageRef = FirebaseStorage.getInstance().getReference("/image/" + filename);
-                                    imageRef.putFile(selectedPhoto).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-                                        @Override
-                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                            imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                Query chatroomNameQuery = FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("chatroomName").equalTo(chatroomName);
+                                chatroomNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.getChildrenCount() == 0) {
+                                            String filename = UUID.randomUUID().toString();
+                                            final StorageReference imageRef = FirebaseStorage.getInstance().getReference("/image/" + filename);
+                                            imageRef.putFile(selectedPhoto).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                                @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                                                 @Override
-                                                public void onSuccess(Uri uri) {
-                                                    ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom(chatroomName, chatroomPassword, uri.toString()));
+                                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                                    imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                        @Override
+                                                        public void onSuccess(Uri uri) {
+                                                            ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom(chatroomName, chatroomPassword, uri.toString()));
 
-                                                    ref.child("/chatrooms/" + chatroomName + "/users/" + currentUsername).setValue(currentUid);
-                                                    Intent intent = new Intent(CreateChatroom.this, Main_chat_activity.class);
-                                                    intent.putExtra("chatroomName", chatroomName);
-                                                    startActivity(intent);
+                                                            ref.child("/chatrooms/" + chatroomName + "/users/" + currentUsername).setValue(currentUid);
+                                                            Intent intent = new Intent(CreateChatroom.this, Main_chat_activity.class);
+                                                            intent.putExtra("chatroomName", chatroomName);
+                                                            startActivity(intent);
+                                                            finish();
+                                                        }
+                                                    });
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
                                                 }
                                             });
+                                        } else {
+                                            Toast.makeText(CreateChatroom.this, "Such chatroom exist", Toast.LENGTH_SHORT).show();
                                         }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                        }
-                                    });
-                                } else {
-                                    Toast.makeText(CreateChatroom.this, "Such chatroom exist", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    }
 
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
                             }
-                        });
-                            }
+
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
                             }
@@ -154,6 +147,7 @@ public class CreateChatroom extends AppCompatActivity {
     }
 
     Uri selectedPhoto = Uri.parse("https://firebasestorage.googleapis.com/v0/b/kvaksha-77242.appspot.com/o/image%2Flogo_blfstya.png?alt=media&token=12bcabf6-4553-4ef0-9628-af2c8fa7303c");
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         CreateChatroom.super.onActivityResult(requestCode, resultCode, data);
