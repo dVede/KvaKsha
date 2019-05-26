@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.registration.Fragments.ChatsFragment;
+import com.example.registration.Fragments.PrivateChatsFragment;
 import com.example.registration.Fragments.ProfileFragment;
 import com.example.registration.Models.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -113,7 +114,12 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
                 setTitle("Chats");
                 ChatsFragment fragment1 = new ChatsFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment1).commit();
-            default:
+                break;
+            case R.id.p_chatrooms:
+                setTitle("Private Chats");
+                PrivateChatsFragment fragment2 = new PrivateChatsFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment2).commit();
+                break;
         }
         mDrawerLayout = findViewById(R.id.slide_menu);
         mDrawerLayout.closeDrawer(GravityCompat.START);
