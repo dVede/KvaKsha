@@ -17,6 +17,7 @@ import com.example.registration.ChatroomAdap;
 import com.example.registration.CreateChatroom;
 import com.example.registration.EnterChatroomMessage;
 import com.example.registration.EnterPrivateMessage;
+import com.example.registration.Notifications.Token;
 import com.example.registration.Models.Chatroom;
 import com.example.registration.R;
 import com.example.registration.Models.User;
@@ -28,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +78,9 @@ public class ChatsFragment extends Fragment {
                                 chatroomsList.add(snapshot.getKey());
                                 readChatroom();
                             }
+                            if (usersList.isEmpty()) {
+                                usersList.add(fUser.getUid());
+                            }
                         }
                         }
                     }
@@ -88,7 +93,7 @@ public class ChatsFragment extends Fragment {
             }
         });
 
-
+updateToken(FirebaseInstanceId.getInstance().getToken());
         return view;
     }
 
@@ -119,6 +124,12 @@ public class ChatsFragment extends Fragment {
 
             }
         });
+    }
+
+    public void updateToken(String token){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token token1 = new Token(token);
+        reference.child(fUser.getUid()).setValue(token1);
     }
 
     @Override

@@ -4,13 +4,15 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.registration.Models.Chatroom;
-import com.example.registration.Models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -19,10 +21,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EnterChatroomMessage extends AppCompatActivity {
 
-    FirebaseUser firebaseUser;
     DatabaseReference ref;
 
     String currentUserUid;
@@ -39,6 +44,7 @@ public class EnterChatroomMessage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
                 ref = FirebaseDatabase.getInstance().getReference();
 
                 button.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +111,6 @@ public class EnterChatroomMessage extends AppCompatActivity {
                                     }
                                 });
                             }
-
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
                             }

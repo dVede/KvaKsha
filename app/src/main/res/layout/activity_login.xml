@@ -4,7 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#5AAED7">
+    android:background="@drawable/gradient1">
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="0dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="246dp"
+        app:layout_constraintEnd_toEndOf="@+id/email_edittext_login"
+        app:layout_constraintStart_toStartOf="@+id/email_edittext_login"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@color/white" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="0dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="330dp"
+        app:layout_constraintEnd_toEndOf="@+id/email_edittext_login"
+        app:layout_constraintStart_toStartOf="@+id/email_edittext_login"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@color/white" />
 
     <ImageView
         android:id="@+id/imageView6"
@@ -43,10 +63,10 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:met_baseColor="#111"
-        app:met_errorColor="#8B0000"
+        app:met_baseColor="#000000"
+        app:met_errorColor="#E53935"
         app:met_floatingLabel="highlight"
-        app:met_primaryColor="@color/colorPrimaryDark" />
+        app:met_primaryColor="#000000" />
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/password_edittext_login"
@@ -68,11 +88,11 @@
         app:layout_constraintTop_toBottomOf="@+id/email_edittext_login"
         app:layout_constraintTop_toTopOf="parent"
         app:met_baseColor="#111"
-        app:met_errorColor="#8B0000"
+        app:met_errorColor="#E53935"
         app:met_floatingLabel="highlight"
         app:met_helperText="6 characters"
         app:met_minCharacters="6"
-        app:met_primaryColor="@color/colorPrimaryDark" />
+        app:met_primaryColor="#000000" />
 
     <TextView
         android:id="@+id/login_registration"
