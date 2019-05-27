@@ -51,7 +51,6 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slide_menu);
         mDrawerLayout = findViewById(R.id.slide_menu);
@@ -60,6 +59,7 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         updateInfo();
 
@@ -70,11 +70,11 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
     }
 
     public void updateInfo(){
-       navigationView = findViewById(R.id.nav_view);
-       headerView = navigationView.getHeaderView(0);
-       imageCircle = headerView.findViewById(R.id.profile_photo);
-       email = headerView.findViewById(R.id.textView2);
-       username = headerView.findViewById(R.id.textView1);
+        navigationView = findViewById(R.id.nav_view);
+        headerView = navigationView.getHeaderView(0);
+        imageCircle = headerView.findViewById(R.id.profile_photo);
+        email = headerView.findViewById(R.id.textView2);
+        username = headerView.findViewById(R.id.textView1);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference().child("/users/" + firebaseUser.getUid());
@@ -87,7 +87,6 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
                 email.setText(user.getEmail());
                 Picasso.get().load(user.getProfileImageUrl()).into(imageCircle);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
@@ -115,7 +114,6 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment1).commit();
             default:
         }
-        mDrawerLayout = findViewById(R.id.slide_menu);
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -130,9 +128,8 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.slide_menu);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
