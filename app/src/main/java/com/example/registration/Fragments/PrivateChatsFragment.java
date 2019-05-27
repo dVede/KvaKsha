@@ -97,8 +97,6 @@ public class PrivateChatsFragment extends Fragment {
 
             }
         });
-
-
         return view;
     }
 
