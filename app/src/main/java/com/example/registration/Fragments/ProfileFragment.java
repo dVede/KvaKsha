@@ -12,17 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.example.registration.EmailChange;
 import com.example.registration.Models.User;
 import com.example.registration.PasswordChange;
 import com.example.registration.R;
-import com.example.registration.SlideMenu;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -60,7 +57,7 @@ public class ProfileFragment extends Fragment {
     StorageReference storageReference;
     private static final int IMAGE_REQUEST = 1;
     private Uri imageUri;
-    private StorageTask uploadTask;
+    private StorageTask<UploadTask.TaskSnapshot> uploadTask;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
