@@ -97,8 +97,6 @@ public class PrivateChatsFragment extends Fragment {
 
             }
         });
-
-
         return view;
     }
 
@@ -110,7 +108,6 @@ public class PrivateChatsFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mUser.clear();
-
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     User user = snapshot.getValue(User.class);
 

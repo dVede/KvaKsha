@@ -31,6 +31,7 @@ public class EnterChatroomMessage extends AppCompatActivity {
     DatabaseReference ref;
 
     String currentUserUid;
+    private FirebaseUser firebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
