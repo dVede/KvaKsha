@@ -17,7 +17,6 @@ import com.example.registration.ChatroomAdap;
 import com.example.registration.CreateChatroom;
 import com.example.registration.EnterChatroomMessage;
 import com.example.registration.EnterPrivateMessage;
-import com.example.registration.Notifications.Token;
 import com.example.registration.Models.Chatroom;
 import com.example.registration.R;
 import com.example.registration.Models.User;
@@ -29,26 +28,25 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatsFragment extends Fragment {
+public class PrivateChatsFragment extends Fragment {
 
     private RecyclerView recyclerView;
 
-    private ChatroomAdap chatroomAdap;
-    private List<Chatroom> mChatrooms;
+    private UserAdap userAdap;
+    private List<User> mUser;
 
     FirebaseUser fUser;
     DatabaseReference reference;
 
-    private List<String> chatroomsList;
+    private List<String> usersList;
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.chatsmenu, menu);
+        inflater.inflate(R.menu.privatechatsmenu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -63,28 +61,35 @@ public class ChatsFragment extends Fragment {
 
         fUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        chatroomsList = new ArrayList<>();
+        usersList = new ArrayList<>();
 
         reference = FirebaseDatabase.getInstance().getReference().child("/chatrooms/");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                chatroomsList.clear();
-
+                usersList.clear();
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    if (!snapshot.toString().contains("@")) {
+                    if (snapshot.toString().contains("@")) {
+                        boolean flag = false;
                         for (DataSnapshot d : snapshot.child("/users/").getChildren()) {
                             if (d.getValue().toString().equals(fUser.getUid())) {
-                                chatroomsList.add(snapshot.getKey());
-                                readChatroom();
+                                flag = true;
+                            }
+                        }
+                        if (flag) {
+                            for (DataSnapshot d : snapshot.child("/users/").getChildren()) {
+                                if (!(d.getValue().toString().equals(fUser.getUid()))) {
+                                    usersList.add(d.getValue().toString());
+                                }
                             }
                             if (usersList.isEmpty()) {
                                 usersList.add(fUser.getUid());
                             }
                         }
-                        }
+                        readChats();
                     }
                 }
+            }
 
 
             @Override
@@ -93,57 +98,55 @@ public class ChatsFragment extends Fragment {
             }
         });
 
-updateToken(FirebaseInstanceId.getInstance().getToken());
+
         return view;
     }
 
-    private void readChatroom(){
-        mChatrooms = new ArrayList<>();
-
-        reference = FirebaseDatabase.getInstance().getReference().child("/chatrooms/");
+    private void readChats(){
+        mUser = new ArrayList<>();
+        reference = FirebaseDatabase.getInstance().getReference().child("/users/");
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mChatrooms.clear();
+                mUser.clear();
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Chatroom chatroom = snapshot.getValue(Chatroom.class);
+                    User user = snapshot.getValue(User.class);
 
-                    for (String id : chatroomsList){
-                        if (chatroom.getChatroomName().equals(id)){
-                            mChatrooms.add(chatroom);
+                    for (String id : usersList){
+                        if (user.getUid().equals(id)){
+                            if (mUser.size() != 0) {
+                                for (int i = 0; i < 1 ; i++) {
+                                    User user1 = mUser.get(i);
+                                    if (!user.getUid().equals(user1.getUid())) {
+                                        mUser.add(user);
+                                    }
+                                }
+                            } else {
+                                mUser.add(user);
+                            }
                         }
+
                     }
                 }
-                chatroomAdap = new ChatroomAdap(getContext(), mChatrooms);
-                recyclerView.setAdapter(chatroomAdap);
+                userAdap = new UserAdap(getContext(), mUser);
+                recyclerView.setAdapter(userAdap);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
-    }
 
-    public void updateToken(String token){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
-        Token token1 = new Token(token);
-        reference.child(fUser.getUid()).setValue(token1);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id){
-            case R.id.create_chatroom:
-                Intent intentCC = new Intent(getActivity(), CreateChatroom.class);
-                startActivity(intentCC);
-                break;
-            case R.id.chatroom_messages:
-                Intent intentCM = new Intent(getActivity(), EnterChatroomMessage.class);
-                startActivity(intentCM);
-                break;
+        if(id == R.id.private_messages){
+                Intent intentPM = new Intent(getActivity(), EnterPrivateMessage.class);
+                startActivity(intentPM);
         }
         return true;
     }

@@ -30,6 +30,8 @@ public class EnterChatroomMessage extends AppCompatActivity {
 
     DatabaseReference ref;
 
+    String currentUserUid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +43,8 @@ public class EnterChatroomMessage extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
                 ref = FirebaseDatabase.getInstance().getReference();
 
                 button.setOnClickListener(new View.OnClickListener() {
@@ -52,50 +56,63 @@ public class EnterChatroomMessage extends AppCompatActivity {
                         final String chatroomName = createChatroomName.getText().toString();
                         final String chatroomPassword = createPasswordChatroom.getText().toString();
 
-                        if (chatroomName.contains("@")){
-                            Toast.makeText(EnterChatroomMessage.this , "Don't use the @ symbol", Toast.LENGTH_SHORT).show();
+                        if (chatroomName.contains("@")) {
+                            Toast.makeText(EnterChatroomMessage.this, "Don't use the @ symbol", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
                         if (chatroomName.isEmpty() || chatroomPassword.isEmpty()) {
-                            Toast.makeText(EnterChatroomMessage.this , "Please enter text in chatroomName/pw", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(EnterChatroomMessage.this, "Please enter text in chatroomName/pw", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
-                        Query chatroomNameQuery = FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("chatroomName").equalTo(chatroomName);
-                        chatroomNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        ref.child("/users/" + firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.getChildrenCount() == 0){
-                                    Toast.makeText(EnterChatroomMessage.this, "Such chatroom don't exist", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    ref.child("/chatrooms/" + chatroomName).addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            Chatroom chatroom = dataSnapshot.getValue(Chatroom.class);
+                                final User currentUser = dataSnapshot.getValue(User.class);
+                                final String currentUsername = currentUser.getUsername();
+                                currentUserUid = currentUser.getUid();
+                                Query chatroomNameQuery = FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("chatroomName").equalTo(chatroomName);
+                                chatroomNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.getChildrenCount() == 0) {
+                                            Toast.makeText(EnterChatroomMessage.this, "Such chatroom don't exist", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            ref.child("/chatrooms/" + chatroomName).addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    Chatroom chatroom = dataSnapshot.getValue(Chatroom.class);
 
-                                            String password = chatroom.getPw();
-                                            if (password.equals(chatroomPassword)){
-                                                Intent intent = new Intent(EnterChatroomMessage.this, Main_chat_activity.class);
-                                                intent.putExtra("chatroomName", chatroomName);
-                                                startActivity(intent);
-                                                finish();
-                                            } else {
-                                                Toast.makeText(EnterChatroomMessage.this, "incorrect password", Toast.LENGTH_SHORT).show();
-                                            }
+                                                    String password = chatroom.getPw();
+                                                    if (password.equals(chatroomPassword)) {
+                                                        ref.child("/chatrooms/" + chatroomName + "/users/" + currentUsername).setValue(currentUserUid);
+                                                        Intent intent = new Intent(EnterChatroomMessage.this, Main_chat_activity.class);
+                                                        intent.putExtra("chatroomName", chatroomName);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    } else {
+                                                        Toast.makeText(EnterChatroomMessage.this, "incorrect password", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                }
+                                            });
                                         }
 
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    }
 
-                                        }
-                                    });
-                                }
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                                    }
+                                });
                             }
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
-
                             }
                         });
                     }
