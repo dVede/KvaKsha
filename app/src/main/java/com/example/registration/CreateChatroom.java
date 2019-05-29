@@ -54,7 +54,6 @@ public class CreateChatroom extends AppCompatActivity {
 
     FirebaseUser firebaseUser;
     DatabaseReference ref;
-
     Button createButton;
     Button selectPhotoButton;
     CircleImageView imageCircle;
@@ -93,15 +92,19 @@ public class CreateChatroom extends AppCompatActivity {
                         final String chatroomName = createChatroomName.getText().toString();
                         final String chatroomPassword = createPasswordChatroom.getText().toString();
 
-                        if (chatroomName.contains("@")) {
-                            Toast.makeText(CreateChatroom.this, "Don't use the @ symbol", Toast.LENGTH_SHORT).show();
+                        if(chatroomName.isEmpty() || chatroomName.contains("a") || chatroomPassword.isEmpty()) {
+                            if (chatroomName.isEmpty()) {
+                                createChatroomName.setError("Empty");
+                            } else {
+                                if (chatroomName.contains("@")) {
+                                    createChatroomName.setError("Invalid name'@'");
+                                }
+                            }
+                            if (chatroomPassword.isEmpty()) {
+                                createPasswordChatroom.setError("Empty");
+                            }
                             return;
                         }
-                        if (chatroomName.isEmpty() || chatroomPassword.isEmpty()) {
-                            Toast.makeText(CreateChatroom.this, "Please enter text in chatroomName/pw", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
                         ref.child("/users/" + firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -138,7 +141,7 @@ public class CreateChatroom extends AppCompatActivity {
                                                 }
                                             });
                                         } else {
-                                            Toast.makeText(CreateChatroom.this, "Such chatroom exist", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(CreateChatroom.this, "Name is already taken", Toast.LENGTH_SHORT).show();
                                         }
                                     }
 

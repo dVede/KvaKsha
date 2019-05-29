@@ -51,11 +51,11 @@ public class EnterPrivateMessage extends AppCompatActivity {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        EditText user = findViewById(R.id.pm_userna);
+                        final EditText user = findViewById(R.id.pm_userna);
                         final String username = user.getText().toString();
 
                         if (username.isEmpty()) {
-                            Toast.makeText(EnterPrivateMessage.this, "Please enter text in Username", Toast.LENGTH_SHORT).show();
+                            user.setError("Empty");
                             return;
                         }
                         ref.child("/users/" + firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
@@ -81,7 +81,6 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                                         }
                                                         IntentWithData(privateChatroomName);
                                                     }
-
                                                     @Override
                                                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -146,7 +145,7 @@ public class EnterPrivateMessage extends AppCompatActivity {
                                                 });
                                             }
                                         } else {
-                                            Toast.makeText(EnterPrivateMessage.this, "Such user doesn't exist", Toast.LENGTH_SHORT).show();
+                                            user.setError("Not found");
                                         }
                                     }
 

@@ -94,7 +94,7 @@ public class UserAdap extends RecyclerView.Adapter<UserAdap.ViewHolder> {
         chatroomNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getChildrenCount() > 0){
+                if (dataSnapshot.getChildrenCount() > 0){
                     finalname[0] = chatroomName;
                 }
                 else{

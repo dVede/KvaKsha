@@ -8,8 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.registration.Models.Chatroom;
@@ -22,10 +20,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class EnterChatroomMessage extends AppCompatActivity {
 
@@ -58,13 +52,17 @@ public class EnterChatroomMessage extends AppCompatActivity {
                         final String chatroomName = createChatroomName.getText().toString();
                         final String chatroomPassword = createPasswordChatroom.getText().toString();
 
-                        if (chatroomName.contains("@")) {
-                            Toast.makeText(EnterChatroomMessage.this, "Don't use the @ symbol", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        if (chatroomName.isEmpty() || chatroomPassword.isEmpty()) {
-                            Toast.makeText(EnterChatroomMessage.this, "Please enter text in chatroomName/pw", Toast.LENGTH_SHORT).show();
+                        if(chatroomName.isEmpty() || chatroomName.contains("a") || chatroomPassword.isEmpty()) {
+                            if (chatroomName.isEmpty()) {
+                                createChatroomName.setError("Empty");
+                            } else {
+                                if (chatroomName.contains("@")) {
+                                    createChatroomName.setError("Invalid name'@'");
+                                }
+                            }
+                            if (chatroomPassword.isEmpty()) {
+                                createPasswordChatroom.setError("Empty");
+                            }
                             return;
                         }
 
@@ -89,12 +87,9 @@ public class EnterChatroomMessage extends AppCompatActivity {
                                                     String password = chatroom.getPw();
                                                     if (password.equals(chatroomPassword)) {
                                                         ref.child("/chatrooms/" + chatroomName + "/users/" + currentUsername).setValue(currentUserUid);
-                                                        Intent intent = new Intent(EnterChatroomMessage.this, Main_chat_activity.class);
-                                                        intent.putExtra("chatroomName", chatroomName);
-                                                        startActivity(intent);
-                                                        finish();
+                                                        IntentWithData(chatroomName);
                                                     } else {
-                                                        Toast.makeText(EnterChatroomMessage.this, "incorrect password", Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(EnterChatroomMessage.this, "incorrect combination", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
 
@@ -123,5 +118,13 @@ public class EnterChatroomMessage extends AppCompatActivity {
                 });
             }
         });
+        finish();
+    }
+
+    private void IntentWithData(String chatroomName) {
+        Intent intent = new Intent(EnterChatroomMessage.this, Main_chat_activity.class);
+        intent.putExtra("chatroomName", chatroomName);
+        startActivity(intent);
+        Log.d("createSavedMessages", "throwing intent with name:" + chatroomName);
     }
 }
