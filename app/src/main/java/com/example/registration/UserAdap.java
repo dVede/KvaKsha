@@ -29,10 +29,12 @@ public class UserAdap extends RecyclerView.Adapter<UserAdap.ViewHolder> {
 
     private Context mContext;
     private List<User> mUsers;
+    private boolean is;
 
-    public UserAdap(Context mContext, List<User> mUsers){
+    public UserAdap(Context mContext, List<User> mUsers, boolean is){
         this.mUsers = mUsers;
         this.mContext = mContext;
+        this.is = is;
     }
 
     @NonNull
@@ -60,6 +62,16 @@ public class UserAdap extends RecyclerView.Adapter<UserAdap.ViewHolder> {
             }
         });
 
+        if (is) {
+            if (user.getStatus().equals("online")){
+                viewHolder.online.setVisibility(View.VISIBLE);
+                viewHolder.offline.setVisibility(View.GONE);
+            } else {
+                viewHolder.offline.setVisibility(View.VISIBLE);
+                viewHolder.online.setVisibility(View.GONE);
+            }
+        }
+
         viewHolder.username.setText(user.getUsername());
         Picasso.get().load(user.getProfileImageUrl()).into(viewHolder.profile_image);
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -76,15 +88,21 @@ public class UserAdap extends RecyclerView.Adapter<UserAdap.ViewHolder> {
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{
-        TextView username;
-        ImageView profile_image;
+        private TextView username;
+        private ImageView profile_image;
+        private ImageView online;
+        private ImageView offline;
 
         ViewHolder(View itemView){
             super(itemView);
             username = itemView.findViewById(R.id.item_username);
             profile_image = itemView.findViewById(R.id.item_profile_image);
+            online = itemView.findViewById(R.id.online);
+            offline = itemView.findViewById(R.id.offline);
+
         }
     }
+
     private void chatroomName(String username1, String username2){
         final String chatroomName = "@" + username1 + "@" + username2;
         final String otherChatroomName = "@" + username2 + "@" + username1;

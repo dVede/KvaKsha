@@ -31,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -107,8 +108,7 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
                 break;
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(SlideMenu.this, LoginIn.class);
-                finish();
+                Intent intent = new Intent(SlideMenu.this, LoginIn.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 break;
             case R.id.chatrooms:
@@ -141,6 +141,27 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void status(String status){
+        reference = FirebaseDatabase.getInstance().getReference().child("/users/").child(firebaseUser.getUid());
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
+
+        reference.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
     }
 
     public void startChatting(Bundle data) {

@@ -24,4 +24,32 @@
         android:layout_centerVertical="true"
         android:textSize="18sp"
         />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        app:civ_border_color="#05df29"
+        app:civ_border_width="10dp"
+        android:visibility="gone"
+        android:id="@+id/online"
+        android:src="@mipmap/ic_launcher"
+        android:layout_below="@id/item_username"
+        android:layout_marginTop="-10dp"
+        android:layout_marginLeft="-15dp"
+        android:layout_toRightOf="@id/item_profile_image"
+        android:layout_toEndOf="@id/item_profile_image"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        app:civ_border_color="#bfbfbf"
+        app:civ_border_width="10dp"
+        android:visibility="gone"
+        android:id="@+id/offline"
+        android:src="@mipmap/ic_launcher"
+        android:layout_below="@id/item_username"
+        android:layout_marginTop="-10dp"
+        android:layout_marginLeft="-15dp"
+        android:layout_toRightOf="@id/item_profile_image"
+        android:layout_toEndOf="@id/item_profile_image"/>
 </RelativeLayout>

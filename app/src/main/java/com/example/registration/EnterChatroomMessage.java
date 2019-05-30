@@ -21,6 +21,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+
 public class EnterChatroomMessage extends AppCompatActivity {
 
     DatabaseReference ref;
@@ -127,4 +129,24 @@ public class EnterChatroomMessage extends AppCompatActivity {
         startActivity(intent);
         Log.d("createSavedMessages", "throwing intent with name:" + chatroomName);
     }
+    private void status(String status){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("/users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
+        reference.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
+    }
+
 }

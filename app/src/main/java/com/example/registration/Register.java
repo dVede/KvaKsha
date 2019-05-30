@@ -127,7 +127,7 @@ public class Register extends AppCompatActivity implements
     private void saveUserInDatabase (String profileImageUrl) {
         uid = FirebaseAuth.getInstance().getUid();
         ref = FirebaseDatabase.getInstance().getReference();
-        User user = new User(email.getText().toString(), uid, profileImageUrl, username.getText().toString());
+        User user = new User(email.getText().toString(), uid, profileImageUrl, username.getText().toString(), "offline");
         ref.child("/users/" + user.getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -230,4 +230,5 @@ public class Register extends AppCompatActivity implements
         if (usernameFound.isEmpty())
             username.setError("Empty");
     }
+
 }

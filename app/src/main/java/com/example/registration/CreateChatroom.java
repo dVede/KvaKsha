@@ -38,6 +38,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -181,4 +182,24 @@ public class CreateChatroom extends AppCompatActivity {
             selectPhotoButton.setAlpha(0f);
         }
     }
+    private void status(String status){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("/users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
+        reference.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
+    }
+
 }

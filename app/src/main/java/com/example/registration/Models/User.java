@@ -1,16 +1,25 @@
 package com.example.registration.Models;
 
 public class User{
-    private String username, uid, profileImageUrl, email;
+    private String username, uid, profileImageUrl, email, status;
 
-    public User(String email, String uid, String profileImageUrl, String username) {
+    public User(String email, String uid, String profileImageUrl, String username, String status) {
         this.username = username;
         this.uid = uid;
         this.profileImageUrl = profileImageUrl;
         this.email = email;
+        this.status = status;
     }
     public User() {
 
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getUid() {

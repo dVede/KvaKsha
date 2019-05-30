@@ -13,11 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.registration.ChatroomAdap;
-import com.example.registration.CreateChatroom;
-import com.example.registration.EnterChatroomMessage;
 import com.example.registration.EnterPrivateMessage;
-import com.example.registration.Models.Chatroom;
 import com.example.registration.R;
 import com.example.registration.Models.User;
 import com.example.registration.UserAdap;
@@ -127,7 +123,7 @@ public class PrivateChatsFragment extends Fragment {
 
                     }
                 }
-                userAdap = new UserAdap(getContext(), mUser);
+                userAdap = new UserAdap(getContext(), mUser, true);
                 recyclerView.setAdapter(userAdap);
             }
             @Override
@@ -142,8 +138,8 @@ public class PrivateChatsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.private_messages){
-                Intent intentPM = new Intent(getActivity(), EnterPrivateMessage.class);
-                startActivity(intentPM);
+            Intent intentPM = new Intent(getActivity(), EnterPrivateMessage.class);
+            startActivity(intentPM);
         }
         return true;
     }

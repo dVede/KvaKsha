@@ -1,5 +1,6 @@
 package com.example.registration;
 
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,9 +22,12 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
 
 
 public class Main_chat_activity extends AppCompatActivity {
@@ -147,5 +151,24 @@ public class Main_chat_activity extends AppCompatActivity {
         sendMessageButton.setOnClickListener(fabClickListener);
     }
 
+    private void status(String status){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("/users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
+        reference.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
+    }
 
 }
