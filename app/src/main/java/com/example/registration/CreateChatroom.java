@@ -64,6 +64,10 @@ public class CreateChatroom extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_chatroom);
         getSupportActionBar().setTitle("Create chatroom");
+        final ProgressDialog dialog = new ProgressDialog(this);
+        ref = FirebaseDatabase.getInstance().getReference();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
 
         createButton = findViewById(R.id.create_button);
         selectPhotoButton = findViewById(R.id.selectphoto_button_cc);
@@ -79,84 +83,79 @@ public class CreateChatroom extends AppCompatActivity {
         });
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                ref = FirebaseDatabase.getInstance().getReference();
-                firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            public void onClick(View view) {
 
-                createButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+                EditText createChatroomName = findViewById(R.id.create_chatroom_name);
+                EditText createPasswordChatroom = findViewById(R.id.create_password_chatroom);
 
-                        EditText createChatroomName = findViewById(R.id.create_chatroom_name);
-                        EditText createPasswordChatroom = findViewById(R.id.create_password_chatroom);
+                final String chatroomName = createChatroomName.getText().toString();
+                final String chatroomPassword = createPasswordChatroom.getText().toString();
 
-                        final String chatroomName = createChatroomName.getText().toString();
-                        final String chatroomPassword = createPasswordChatroom.getText().toString();
-
-                        if(chatroomName.isEmpty() || chatroomName.contains("a") || chatroomPassword.isEmpty()) {
-                            if (chatroomName.isEmpty()) {
-                                createChatroomName.setError("Empty");
-                            } else {
-                                if (chatroomName.contains("@")) {
-                                    createChatroomName.setError("Invalid name'@'");
-                                }
-                            }
-                            if (chatroomPassword.isEmpty()) {
-                                createPasswordChatroom.setError("Empty");
-                            }
-                            return;
+                if (chatroomName.isEmpty() || chatroomName.contains("a") || chatroomPassword.isEmpty()) {
+                    if (chatroomName.isEmpty()) {
+                        createChatroomName.setError("Empty");
+                    } else {
+                        if (chatroomName.contains("@")) {
+                            createChatroomName.setError("Invalid name'@'");
                         }
-                        ref.child("/users/" + firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+                    }
+                    if (chatroomPassword.isEmpty()) {
+                        createPasswordChatroom.setError("Empty");
+                    }
+                    return;
+                }
+                ref.child("/users/" + firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        dialog.setMessage("Create chatroom...");
+                        dialog.show();
+                        final User currentUser = dataSnapshot.getValue(User.class);
+                        final String currentUid = currentUser.getUid();
+                        final String currentUsername = currentUser.getUsername();
+                        Query chatroomNameQuery = FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("chatroomName").equalTo(chatroomName);
+                        chatroomNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                final User currentUser = dataSnapshot.getValue(User.class);
-                                final String currentUid = currentUser.getUid();
-                                final String currentUsername = currentUser.getUsername();
-                                Query chatroomNameQuery = FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("chatroomName").equalTo(chatroomName);
-                                chatroomNameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        if (dataSnapshot.getChildrenCount() == 0) {
-                                            String filename = UUID.randomUUID().toString();
-                                            final StorageReference imageRef = FirebaseStorage.getInstance().getReference("/image/" + filename);
-                                            imageRef.putFile(selectedPhoto).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                                @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                                if (dataSnapshot.getChildrenCount() == 0) {
+                                    String filename = UUID.randomUUID().toString();
+                                    final StorageReference imageRef = FirebaseStorage.getInstance().getReference("/image/" + filename);
+                                    imageRef.putFile(selectedPhoto).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                            imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                 @Override
-                                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                                    imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                                        @Override
-                                                        public void onSuccess(Uri uri) {
-                                                            ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom(chatroomName, chatroomPassword, uri.toString()));
+                                                public void onSuccess(Uri uri) {
+                                                    dialog.dismiss();
+                                                    ref.child("/chatrooms/" + chatroomName).setValue(new Chatroom(chatroomName, chatroomPassword, uri.toString()));
 
-                                                            ref.child("/chatrooms/" + chatroomName + "/users/" + currentUsername).setValue(currentUid);
-                                                            Intent intent = new Intent(CreateChatroom.this, Main_chat_activity.class);
-                                                            intent.putExtra("chatroomName", chatroomName);
-                                                            startActivity(intent);
-                                                            finish();
-                                                        }
-                                                    });
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
+                                                    ref.child("/chatrooms/" + chatroomName + "/users/" + currentUsername).setValue(currentUid);
+                                                    Intent intent = new Intent(CreateChatroom.this, Main_chat_activity.class);
+                                                    intent.putExtra("chatroomName", chatroomName);
+                                                    startActivity(intent);
+                                                    finish();
                                                 }
                                             });
-                                        } else {
-                                            Toast.makeText(CreateChatroom.this, "Name is already taken", Toast.LENGTH_SHORT).show();
                                         }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
-                                });
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                }
                             }
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
+                                dialog.dismiss();
                             }
                         });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        dialog.dismiss();
                     }
                 });
             }

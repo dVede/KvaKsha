@@ -28,4 +28,6 @@
     <string name="change_password">Change password</string>
     <string name="change_email">Change Email</string>
     <string name="enter">Enter</string>
+    <string name="contact_information">Contact information</string>
+    <string name="communicate">Communicate</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.registration;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -38,12 +39,9 @@ public class EnterChatroomMessage extends AppCompatActivity {
 
         final Button button = findViewById(R.id.enter_button_cm);
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
-                ref = FirebaseDatabase.getInstance().getReference();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        ref = FirebaseDatabase.getInstance().getReference();
+        final ProgressDialog dialog = new ProgressDialog(this);
 
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -71,6 +69,8 @@ public class EnterChatroomMessage extends AppCompatActivity {
                         ref.child("/users/" + firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                dialog.setMessage("Entering...");
+                                dialog.show();
                                 final User currentUser = dataSnapshot.getValue(User.class);
                                 final String currentUsername = currentUser.getUsername();
                                 currentUserUid = currentUser.getUid();
@@ -79,6 +79,7 @@ public class EnterChatroomMessage extends AppCompatActivity {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         if (dataSnapshot.getChildrenCount() == 0) {
+                                            dialog.dismiss();
                                             Toast.makeText(EnterChatroomMessage.this, "Such chatroom don't exist", Toast.LENGTH_SHORT).show();
                                         } else {
                                             ref.child("/chatrooms/" + chatroomName).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -89,16 +90,18 @@ public class EnterChatroomMessage extends AppCompatActivity {
                                                     String password = chatroom.getPw();
                                                     if (password.equals(chatroomPassword)) {
                                                         ref.child("/chatrooms/" + chatroomName + "/users/" + currentUsername).setValue(currentUserUid);
+                                                        dialog.show();
                                                         IntentWithData(chatroomName);
                                                         finish();
                                                     } else {
+                                                        dialog.show();
                                                         Toast.makeText(EnterChatroomMessage.this, "incorrect combination", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
 
                                                 @Override
                                                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                                                    dialog.show();
                                                 }
                                             });
                                         }
@@ -107,12 +110,13 @@ public class EnterChatroomMessage extends AppCompatActivity {
 
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                                        dialog.show();
                                     }
                                 });
                             }
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
+                                dialog.show();
                             }
                         });
                     }
@@ -120,8 +124,6 @@ public class EnterChatroomMessage extends AppCompatActivity {
 
                 });
             }
-        });
-    }
 
     private void IntentWithData(String chatroomName) {
         Intent intent = new Intent(EnterChatroomMessage.this, Main_chat_activity.class);

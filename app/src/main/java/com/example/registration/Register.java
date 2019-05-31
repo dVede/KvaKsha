@@ -163,6 +163,11 @@ public class Register extends AppCompatActivity implements
             return;
         }
 
+        if (selectedPhoto == null){
+            Toast.makeText(this, "choose image",Toast.LENGTH_LONG).show();
+            return;
+        }
+
         Query usernameQuery = FirebaseDatabase.getInstance().getReference().child("users").orderByChild("username").equalTo(usernameFound);
         usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

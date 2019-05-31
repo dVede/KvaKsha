@@ -67,9 +67,10 @@ public class Main_chat_activity extends AppCompatActivity {
         Log.d("ChatActivity", "getting the chatroom path, current user and URL");
 
         final RecyclerView listOfMessages = findViewById(R.id.list_of_messages);
-        listOfMessages.setHasFixedSize(false);
+        listOfMessages.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         listOfMessages.setLayoutManager(layoutManager);
+        layoutManager.setStackFromEnd(true);
         Query query = FirebaseDatabase.getInstance().getReference().child(chatroomPath).limitToLast(50);
         FirebaseRecyclerOptions<Message> options =
                 new FirebaseRecyclerOptions.Builder<Message>()

@@ -6,8 +6,6 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -19,8 +17,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.registration.Fragments.AllChatsFragment;
-import com.example.registration.Fragments.ChatsFragment;
-import com.example.registration.Fragments.PrivateChatsFragment;
+import com.example.registration.Fragments.ContactInfromationFragment;
 import com.example.registration.Fragments.ProfileFragment;
 import com.example.registration.Models.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -116,6 +114,10 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
                 AllChatsFragment fragment1 = new AllChatsFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment1).commit();
                 break;
+            case R.id.contact_information:
+                ContactInfromationFragment fragment2 = new ContactInfromationFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment2).commit();
+                break;
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
@@ -138,12 +140,23 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
         }
     }
 
-    public void startChatting(Bundle data) {
-        Fragment chatFragment = new MainChatFragment();
-        chatFragment.setArguments(data);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, chatFragment);
-        transaction.show(chatFragment);
-        transaction.commit();
+    private void status(String status){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("/users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
+        reference.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
     }
 }
