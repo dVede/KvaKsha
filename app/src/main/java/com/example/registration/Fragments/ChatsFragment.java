@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import com.example.registration.ChatroomAdap;
 import com.example.registration.CreateChatroom;
 import com.example.registration.EnterChatroomMessage;
+import com.example.registration.EnterPrivateMessage;
 import com.example.registration.Models.Chatroom;
 import com.example.registration.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,12 +41,6 @@ public class ChatsFragment extends Fragment {
     DatabaseReference reference;
 
     private List<String> chatroomsList;
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.chatsmenu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -113,7 +108,6 @@ public class ChatsFragment extends Fragment {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
     }
@@ -129,6 +123,10 @@ public class ChatsFragment extends Fragment {
             case R.id.chatroom_messages:
                 Intent intentCM = new Intent(getActivity(), EnterChatroomMessage.class);
                 startActivity(intentCM);
+                break;
+            case R.id.private_messages:
+                Intent intentPM = new Intent(getActivity(), EnterPrivateMessage.class);
+                startActivity(intentPM);
                 break;
         }
         return true;

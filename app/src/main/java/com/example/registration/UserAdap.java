@@ -99,7 +99,6 @@ public class UserAdap extends RecyclerView.Adapter<UserAdap.ViewHolder> {
             profile_image = itemView.findViewById(R.id.item_profile_image);
             online = itemView.findViewById(R.id.online);
             offline = itemView.findViewById(R.id.offline);
-
         }
     }
 

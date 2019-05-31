@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.registration.Fragments.AllChatsFragment;
 import com.example.registration.Fragments.ChatsFragment;
 import com.example.registration.Fragments.PrivateChatsFragment;
 import com.example.registration.Fragments.ProfileFragment;
@@ -31,7 +32,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import java.util.HashMap;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -113,13 +113,8 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
                 break;
             case R.id.chatrooms:
                 setTitle("Chats");
-                ChatsFragment fragment1 = new ChatsFragment();
+                AllChatsFragment fragment1 = new AllChatsFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment1).commit();
-                break;
-            case R.id.p_chatrooms:
-                setTitle("Private Chats");
-                PrivateChatsFragment fragment2 = new PrivateChatsFragment();
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment2).commit();
                 break;
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -141,27 +136,6 @@ public class SlideMenu extends AppCompatActivity implements NavigationView.OnNav
         } else {
             super.onBackPressed();
         }
-    }
-
-    private void status(String status){
-        reference = FirebaseDatabase.getInstance().getReference().child("/users/").child(firebaseUser.getUid());
-
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("status", status);
-
-        reference.updateChildren(hashMap);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        status("online");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        status("offline");
     }
 
     public void startChatting(Bundle data) {

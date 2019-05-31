@@ -230,5 +230,4 @@ public class Register extends AppCompatActivity implements
         if (usernameFound.isEmpty())
             username.setError("Empty");
     }
-
 }

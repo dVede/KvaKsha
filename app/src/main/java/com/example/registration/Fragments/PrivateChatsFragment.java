@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.registration.CreateChatroom;
+import com.example.registration.EnterChatroomMessage;
 import com.example.registration.EnterPrivateMessage;
 import com.example.registration.R;
 import com.example.registration.Models.User;
@@ -39,12 +41,6 @@ public class PrivateChatsFragment extends Fragment {
     DatabaseReference reference;
 
     private List<String> usersList;
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.privatechatsmenu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -86,7 +82,6 @@ public class PrivateChatsFragment extends Fragment {
                     }
                 }
             }
-
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -137,9 +132,19 @@ public class PrivateChatsFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == R.id.private_messages){
-            Intent intentPM = new Intent(getActivity(), EnterPrivateMessage.class);
-            startActivity(intentPM);
+        switch (id){
+            case R.id.create_chatroom:
+                Intent intentCC = new Intent(getActivity(), CreateChatroom.class);
+                startActivity(intentCC);
+                break;
+            case R.id.chatroom_messages:
+                Intent intentCM = new Intent(getActivity(), EnterChatroomMessage.class);
+                startActivity(intentCM);
+                break;
+            case R.id.private_messages:
+                Intent intentPM = new Intent(getActivity(), EnterPrivateMessage.class);
+                startActivity(intentPM);
+                break;
         }
         return true;
     }
